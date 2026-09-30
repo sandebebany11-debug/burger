@@ -1,110 +1,232 @@
-import { useEffect, useRef } from "react";
-import { renderBurger } from "../lib/burgerRenderer";
-import { useReducedMotion } from "../hooks/useReducedMotion";
-import { brand, contact } from "../data/content";
+import { useEffect, useRef, useState } from "react";
+import { business } from "../data/content";
+import { gsap, prefersReducedMotion, stopScroll } from "../lib/motion";
+import Emblem from "./Emblem";
+import { Button, Lines, useGsap } from "./ui";
 import "./Hero.css";
 
+const INTRO_SEEN = "cd-intro-seen";
+
+/** Desktop arch geometry (px) for the video window, from the viewport size. */
+function archClip(vw: number, vh: number): string {
+  const w = Math.min(vw * 0.36, vh * 0.62);
+  const right = vw * 0.07;
+  const left = vw - right - w;
+  const top = vh * 0.13;
+  const bottom = vh * 0.06;
+  const r = w / 2;
+  return `inset(${top}px ${right}px ${bottom}px ${left}px round ${r}px ${r}px 0px 0px)`;
+}
+const FULL = "inset(0px 0px 0px 0px round 0px 0px 0px 0px)";
+
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const reducedMotion = useReducedMotion();
-  const scrollYRef = useRef(0);
+  const root = useRef<HTMLElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const [introDone, setIntroDone] = useState(false);
+  const [paused, setPaused] = useState(false);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const stage = stageRef.current;
-    if (!canvas || !stage) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  useGsap(root, ({ reduced, q }) => {
+    const desktop = window.matchMedia("(min-width: 900px)").matches;
+    const media = q(".hero__media")[0];
+    const intro = q(".intro")[0];
+    const header = document.querySelector(".header__bar");
+    const seen = sessionStorage.getItem(INTRO_SEEN) === "1";
 
-    let raf = 0;
-    const start = performance.now();
-    const sizeRef = { width: 0, height: 0 };
-
-    const resize = () => {
-      const rect = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      sizeRef.width = rect.width;
-      sizeRef.height = rect.height;
+    const finish = () => {
+      setIntroDone(true);
+      stopScroll(false);
+      document.documentElement.classList.add("intro-done");
+      try {
+        sessionStorage.setItem(INTRO_SEEN, "1");
+      } catch {
+        /* private mode */
+      }
     };
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(stage);
 
-    const onScroll = () => {
-      scrollYRef.current = window.scrollY;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    if (reducedMotion) {
-      renderBurger(ctx, {
-        width: sizeRef.width,
-        height: sizeRef.height,
-        progress: 0,
-        time: 0,
-        idleStrength: 0,
-        reducedMotion: true,
-      });
-      return () => {
-        ro.disconnect();
-        window.removeEventListener("scroll", onScroll);
-      };
+    if (reduced) {
+      gsap.set(media, { clipPath: desktop ? archClip(innerWidth, innerHeight) : FULL });
+      gsap.set(intro, { display: "none" });
+      finish();
+      return;
     }
 
-    const tick = (now: number) => {
-      raf = requestAnimationFrame(tick);
-      const time = (now - start) / 1000;
-      const vh = window.innerHeight || 1;
-      const exitProgress = Math.min(1, Math.max(0, scrollYRef.current / vh));
-      renderBurger(ctx, {
-        width: sizeRef.width,
-        height: sizeRef.height,
-        progress: exitProgress * 0.22,
-        time,
-        idleStrength: 1 - exitProgress * 0.6,
-        reducedMotion: false,
-      });
-    };
-    raf = requestAnimationFrame(tick);
+    // ---------------------------------------------------------- entrance
+    stopScroll(true);
+    const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+    const paths = q(".intro .lily-path") as unknown as SVGPathElement[];
 
+    if (!seen) {
+      paths.forEach((p) => {
+        const len = p.getTotalLength?.() ?? 400;
+        gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, fillOpacity: 0 });
+      });
+      tl.to(paths, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut", stagger: 0.02 })
+        .to(paths, { fillOpacity: 1, duration: 0.35, ease: "power1.out" }, "-=0.3")
+        .from(q(".intro__word .line-mask > span"), { yPercent: 110, duration: 0.7 }, "-=0.45")
+        .from(q(".intro__sub"), { opacity: 0, y: 10, duration: 0.5 }, "<0.2");
+    } else {
+      tl.from(q(".intro__mark"), { opacity: 0, scale: 0.94, duration: 0.45 });
+    }
+
+    // impatient visitors: any input fast-forwards the intro
+    const skip = () => tl.progress() < 0.95 && tl.timeScale(3.5);
+    const skipEvents = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+    skipEvents.forEach((ev) => window.addEventListener(ev, skip, { once: true, passive: true }));
+    tl.eventCallback("onComplete", () => skipEvents.forEach((ev) => window.removeEventListener(ev, skip)));
+
+    tl.to(intro, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.95, ease: "expo.inOut" })
+      .addLabel("revealed")
+      .fromTo(
+        media,
+        { clipPath: desktop ? archClip(innerWidth, innerHeight).replace(/^inset\(\S+/, `inset(${innerHeight}px`) : "inset(100% 0px 0px 0px round 0px 0px 0px 0px)" },
+        { clipPath: desktop ? archClip(innerWidth, innerHeight) : FULL, duration: 1.4 },
+        "-=0.55",
+      )
+      .from(q(".hero__video"), { scale: 1.35, duration: 2 }, "<")
+      .from(q(".hero__title .line-mask > span"), { yPercent: 110, duration: 1.2, stagger: 0.08 }, "<0.1")
+      .from(q(".hero__reveal"), { opacity: 0, y: 24, duration: 1, stagger: 0.07 }, "<0.3")
+      .from(q(".hero__arch-line"), { opacity: 0, duration: 1.2 }, "<")
+      .from(header, { opacity: 0, y: -16, duration: 0.9, clearProps: "opacity,transform" }, "<0.1")
+      // hand scrolling back as soon as the hero is on screen
+      .add(finish, "revealed");
+
+    // ---------------------------------------------------------- scroll
+    if (desktop) {
+      const st = gsap.timeline({
+        scrollTrigger: {
+          trigger: root.current,
+          start: "top top",
+          end: "+=110%",
+          scrub: 0.8,
+          pin: q(".hero__pin")[0],
+          invalidateOnRefresh: true,
+        },
+      });
+      st.fromTo(media, { clipPath: () => archClip(innerWidth, innerHeight) }, { clipPath: FULL, ease: "power2.inOut", immediateRender: false }, 0)
+        .to(q(".hero__content"), { yPercent: -18, opacity: 0, ease: "power1.in", duration: 0.55 }, 0)
+        .to(q(".hero__arch-line"), { opacity: 0, scale: 1.08, duration: 0.4 }, 0)
+        .to(q(".hero__shade"), { opacity: 1, duration: 0.6 }, 0.25)
+        .from(q(".hero__caption .line-mask > span"), { yPercent: 110, stagger: 0.08, duration: 0.45 }, 0.5)
+        .from(q(".hero__caption .label"), { opacity: 0, duration: 0.3 }, 0.6);
+    } else {
+      gsap.to(q(".hero__video"), {
+        yPercent: 12,
+        ease: "none",
+        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+      });
+    }
+  });
+
+  // Pause the video off-screen (battery) and honour the pause button.
+  useEffect(() => {
+    const v = video.current;
+    if (!v) return;
+    if (prefersReducedMotion()) {
+      v.pause();
+      setPaused(true);
+      return;
+    }
+    const onPlay = () => setPaused(false);
+    const onPause = () => setPaused(!!v.dataset.userPaused);
+    v.addEventListener("play", onPlay);
+    v.addEventListener("pause", onPause);
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !v.dataset.userPaused) v.play().catch(() => {});
+      else v.pause();
+    });
+    io.observe(v);
     return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("scroll", onScroll);
+      io.disconnect();
+      v.removeEventListener("play", onPlay);
+      v.removeEventListener("pause", onPause);
     };
-  }, [reducedMotion]);
+  }, []);
+
+  const togglePlay = () => {
+    const v = video.current;
+    if (!v) return;
+    if (v.paused) {
+      delete v.dataset.userPaused;
+      v.play().catch(() => {});
+      setPaused(false);
+    } else {
+      v.dataset.userPaused = "1";
+      v.pause();
+      setPaused(true);
+    }
+  };
 
   return (
-    <section id="top" className="hero" aria-label="Startbereich">
-      <div ref={stageRef} className="hero__stage">
-        <canvas ref={canvasRef} className="hero__canvas" aria-hidden="true" />
-      </div>
-      <div className="hero__vignette" aria-hidden="true" />
-      <div className="hero__content container">
-        <span className="hero__logo hero__reveal hero__reveal--1">{brand.name}</span>
-        <h1 className="hero__headline hero__reveal hero__reveal--2">
-          Wir kreieren <em>Burger</em> mit Leidenschaft!
-        </h1>
-        <p className="hero__sub hero__reveal hero__reveal--3">
-          Restaurant &amp; Lieferservice in {brand.city}
-        </p>
-        <div className="hero__cta hero__reveal hero__reveal--4">
-          <a className="btn" href={contact.shopUrl} target="_blank" rel="noopener noreferrer">
-            Online bestellen
-          </a>
-          <a className="btn btn-ghost" href="#burger">
-            Unsere Burger entdecken
-          </a>
+    <section id="top" ref={root} className="hero theme-dark" aria-labelledby="hero-title">
+      <div className="intro" aria-hidden="true">
+        <div className="intro__mark">
+          <Emblem className="intro__lily" animated title="" />
+          <p className="intro__word">
+            <Lines lines={["Casa Ducale"]} />
+          </p>
+          <p className="intro__sub label">Cucina Italiana</p>
         </div>
       </div>
-      <div className="hero__scroll-hint hero__reveal hero__reveal--5" aria-hidden="true">
-        <span />
-        Scrollen
+
+      <div className="hero__pin">
+        <div className="hero__media grain">
+          <video
+            ref={video}
+            className="hero__video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/media/video/hero-poster.webp"
+            aria-hidden="true"
+          >
+            <source src="/media/video/hero.webm" type="video/webm" />
+            <source src="/media/video/hero.mp4" type="video/mp4" />
+          </video>
+          <div className="hero__tint" />
+          <div className="hero__shade" />
+        </div>
+
+        <div className="hero__arch-line" aria-hidden="true" />
+
+        <div className="hero__content container">
+          <p className="label label--gold hero__reveal hero__kicker">
+            Ristorante · Café — {business.city}-{business.district}
+          </p>
+          <h1 id="hero-title" className="hero__title display">
+            <Lines lines={["Casa", <em key="d">Ducale</em>]} />
+          </h1>
+          <p className="hero__tagline label hero__reveal">Cucina Italiana</p>
+          <p className="hero__text hero__reveal">
+            Italienisches Lebensgefühl und herzliche Gastfreundschaft. Vom Frühstück bis zum Abendessen — mitten in
+            Wiesdorf.
+          </p>
+          <div className="hero__ctas hero__reveal">
+            <Button href="#reservieren" variant="gold" cursor="Reserve">
+              Tisch reservieren
+            </Button>
+            <Button href="#restaurant" variant="ghost" className="on-dark" arrow={false}>
+              Entdecke Casa Ducale
+            </Button>
+          </div>
+        </div>
+
+        <div className="hero__caption" aria-hidden={!introDone}>
+          <p className="label label--gold">La Cucina</p>
+          <p className="hero__caption-text display">
+            <Lines lines={["Direkt aus", <em key="k">unserer Küche.</em>]} />
+          </p>
+        </div>
+
+        <div className="hero__foot hero__reveal">
+          <span className="hero__scroll" aria-hidden="true">
+            <span />
+          </span>
+          <button className="hero__play label" type="button" onClick={togglePlay} aria-pressed={paused}>
+            {paused ? "Video abspielen" : "Video pausieren"}
+          </button>
+        </div>
       </div>
     </section>
   );

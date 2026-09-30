@@ -1,0 +1,185 @@
+.kitchen {
+  position: relative;
+  overflow: hidden;
+}
+.kitchen__pin {
+  position: relative;
+  padding-block: var(--section);
+}
+.kitchen__ghost {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  translate: 0 -50%;
+  font-size: clamp(10rem, 30vw, 32rem);
+  font-style: italic;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(184, 145, 79, 0.16);
+  pointer-events: none;
+  user-select: none;
+  display: none;
+}
+
+.kitchen__track {
+  display: grid;
+  gap: clamp(64px, 12vw, 120px);
+  padding-inline: var(--gutter);
+}
+.kitchen__intro {
+  display: grid;
+  gap: 24px;
+  align-content: center;
+  justify-items: start;
+}
+.kitchen__intro h2 em {
+  color: var(--gold-light);
+}
+.kitchen__lead {
+  max-width: 36ch;
+}
+
+.plate {
+  display: grid;
+  gap: 22px;
+}
+.plate__frame {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+}
+.plate--wide .plate__frame {
+  aspect-ratio: 16 / 11;
+}
+.plate--square .plate__frame {
+  aspect-ratio: 1;
+}
+.plate__caption {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 18px;
+  row-gap: 4px;
+  align-items: baseline;
+}
+.plate__index {
+  grid-row: span 3;
+  color: var(--gold);
+}
+.plate__title {
+  font-size: clamp(2.2rem, 3.4vw, 3.2rem);
+  line-height: 1;
+}
+.plate__german {
+  color: var(--on-dark-faint);
+}
+.plate__line {
+  font-size: 0.95rem;
+}
+
+.kitchen__end {
+  display: grid;
+  gap: 32px;
+  justify-items: start;
+  align-content: center;
+}
+.kitchen__end em {
+  color: var(--gold-light);
+}
+
+.kitchen__progress {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .kitchen__pin {
+    height: 100vh;
+    height: 100svh;
+    padding-block: 0;
+    display: flex;
+    align-items: center;
+  }
+  .kitchen__ghost {
+    display: block;
+  }
+  .kitchen__track {
+    display: flex;
+    align-items: center;
+    gap: clamp(56px, 7vw, 130px);
+    width: max-content;
+    padding-top: 4vh;
+    will-change: transform;
+  }
+  .kitchen__intro {
+    width: min(38vw, 560px);
+    flex: none;
+  }
+  .plate {
+    flex: none;
+  }
+  .plate--tall {
+    width: min(28vw, 58vh);
+  }
+  .plate--wide {
+    width: min(50vw, 108vh);
+  }
+  .plate--square {
+    width: min(34vw, 62vh);
+  }
+  .plate:nth-of-type(even) {
+    align-self: flex-end;
+    margin-bottom: 2vh;
+  }
+  .plate:nth-of-type(odd) {
+    align-self: flex-start;
+    margin-top: 4vh;
+  }
+  .plate__frame,
+  .plate--wide .plate__frame,
+  .plate--square .plate__frame {
+    aspect-ratio: auto;
+    height: min(62vh, 700px);
+  }
+  .plate--wide .plate__frame {
+    height: min(52vh, 600px);
+  }
+  .plate--square .plate__frame {
+    height: min(54vh, 620px);
+  }
+  .kitchen__end {
+    width: min(40vw, 560px);
+    padding-right: var(--gutter);
+    flex: none;
+  }
+  .kitchen__progress {
+    display: block;
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 36px;
+    height: 1px;
+    background: var(--line-dark);
+  }
+  .kitchen__progress span {
+    display: block;
+    height: 100%;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+}
+
+/* no pinned travel for reduced motion: let the plates wrap instead */
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .kitchen__pin {
+    height: auto;
+    padding-block: var(--section);
+  }
+  .kitchen__track {
+    flex-wrap: wrap;
+    width: auto;
+    row-gap: 80px;
+  }
+  .kitchen__ghost,
+  .kitchen__progress {
+    display: none;
+  }
+}

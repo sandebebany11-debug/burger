@@ -1,0 +1,116 @@
+.marchio {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--section);
+}
+.marchio__inner {
+  position: relative;
+  display: grid;
+  gap: clamp(72px, 10vw, 120px);
+  align-items: center;
+}
+
+.marchio__stage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  perspective: 900px;
+}
+.marchio__halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 280%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 145, 79, 0.28), rgba(184, 145, 79, 0) 62%);
+  pointer-events: none;
+}
+.marchio__lily-wrap {
+  position: relative;
+  width: clamp(150px, 26vw, 260px);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.marchio__lily {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45));
+}
+/* gold sheen that sweeps across the lily, masked to its shape */
+.marchio__shine {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: url("/brand/lily-mask.svg") center / contain no-repeat;
+  mask: url("/brand/lily-mask.svg") center / contain no-repeat;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 244, 214, 0.85) 50%, transparent 62%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 120% 0;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.marchio.is-shining .marchio__shine {
+  animation: lily-shine 5.5s var(--ease-in-out) 0.2s infinite;
+}
+@keyframes lily-shine {
+  0% {
+    background-position: 120% 0;
+  }
+  45%,
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+.marchio__name {
+  margin-top: clamp(28px, 4vw, 44px);
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(3.6rem, 9vw, 8rem);
+  line-height: 0.95;
+}
+.marchio__name em {
+  color: var(--on-dark);
+}
+.marchio__rule {
+  display: block;
+  width: min(240px, 50%);
+  height: 1px;
+  margin: 28px auto 22px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.marchio__meta {
+  display: grid;
+  gap: 12px;
+}
+.marchio__meta .label {
+  color: var(--gold);
+  letter-spacing: 0.55em;
+  margin-right: -0.55em;
+}
+
+.marchio__figure {
+  position: relative;
+  justify-self: center;
+  width: min(86vw, 520px);
+}
+.marchio__photo {
+  aspect-ratio: 4 / 5;
+}
+.marchio__caption {
+  margin-top: 16px;
+  color: var(--on-dark-faint);
+}
+
+@media (min-width: 900px) {
+  .marchio__inner {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+  .marchio__figure {
+    justify-self: end;
+    width: 100%;
+    max-width: 520px;
+  }
+}

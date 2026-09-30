@@ -1,0 +1,209 @@
+.menu-sec {
+  position: relative;
+  padding-block: var(--section);
+  background: var(--linen);
+}
+.menu-sec__grid {
+  display: grid;
+  gap: clamp(40px, 6vw, 80px);
+}
+.menu-sec__eyebrow {
+  color: var(--gold-deep);
+}
+.menu-sec__title {
+  margin-top: 24px;
+}
+.menu-sec__title em {
+  color: var(--gold-deep);
+}
+
+/* tabs: horizontal strip on mobile, vertical index on desktop */
+.menu-sec__tabs {
+  display: flex;
+  gap: 8px;
+  margin: 36px calc(var(--gutter) * -1) 0;
+  padding: 4px var(--gutter) 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.menu-sec__tabs::-webkit-scrollbar {
+  display: none;
+}
+.menu-tab {
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-light);
+  scroll-snap-align: center;
+  transition: background-color 0.5s var(--ease-out), color 0.5s var(--ease-out), box-shadow 0.5s;
+  align-items: center;
+}
+.menu-tab__n {
+  display: none;
+}
+.menu-tab__label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.menu-tab__it {
+  display: none;
+}
+.menu-tab.is-active {
+  background: var(--ink);
+  color: var(--ivory);
+  box-shadow: none;
+}
+
+/* panel */
+.menu-cat {
+  outline: none;
+}
+.menu-cat__head {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--line-light);
+}
+.menu-cat__title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 7vw, 6.4rem);
+  line-height: 0.95;
+}
+.menu-cat__title em {
+  color: var(--gold-deep);
+}
+.menu-cat__list {
+  display: grid;
+}
+.dish {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+.dish__row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.dish__name {
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.15;
+}
+.dish__leader {
+  flex: 1;
+  min-width: 24px;
+  border-bottom: 1px dotted var(--on-light-faint);
+  transform-origin: left;
+  translate: 0 -5px;
+}
+.dish__price {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dish__eur {
+  color: var(--on-light-dim);
+  font-weight: 500;
+}
+.dish__na {
+  color: var(--on-light-faint);
+}
+.dish__desc {
+  margin-top: 6px;
+  max-width: 54ch;
+  font-size: 0.95rem;
+}
+.dish__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 12px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--gold-light);
+  font-size: 0.58rem;
+  vertical-align: middle;
+  translate: 0 -3px;
+}
+.dish__lily {
+  width: 10px;
+  height: auto;
+}
+.menu-cat__note {
+  margin: 28px 0 36px;
+  font-size: var(--fs-small);
+  color: var(--on-light-dim);
+  max-width: 60ch;
+}
+
+@media (min-width: 900px) {
+  .menu-sec__grid {
+    grid-template-columns: minmax(280px, 0.8fr) 1.2fr;
+    align-items: start;
+  }
+  .menu-sec__side {
+    position: sticky;
+    top: calc(var(--header-h) + 40px);
+  }
+  .menu-sec__tabs {
+    display: grid;
+    gap: 0;
+    margin: 48px 0 0;
+    padding: 0;
+    overflow: visible;
+    border-top: 1px solid var(--line-light);
+  }
+  .menu-tab {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: baseline;
+    min-height: 0;
+    padding: 16px 0;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--line-light);
+    text-align: left;
+    color: var(--on-light-dim);
+  }
+  .menu-tab__n {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--gold-deep);
+  }
+  .menu-tab__it {
+    display: block;
+    font-size: 1.35rem;
+    font-style: italic;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+  .menu-tab__label {
+    transition: transform 0.5s var(--ease-out);
+  }
+  .menu-tab:hover,
+  .menu-tab.is-active {
+    background: none;
+    color: var(--on-light);
+  }
+  .menu-tab:hover .menu-tab__label,
+  .menu-tab.is-active .menu-tab__label {
+    transform: translateX(8px);
+  }
+  .menu-tab.is-active .menu-tab__it {
+    opacity: 1;
+    transform: none;
+    color: var(--gold-deep);
+  }
+}

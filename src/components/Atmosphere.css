@@ -1,0 +1,69 @@
+.atmo {
+  position: relative;
+}
+.atmo__pin {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.atmo__frame {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0% 0% 0% 0% round 0px 0px 0px 0px);
+  will-change: clip-path;
+}
+.atmo__frame .pic {
+  position: absolute;
+  inset: 0;
+}
+.atmo__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 17, 14, 0.25), rgba(20, 17, 14, 0.82));
+  opacity: 0;
+}
+.atmo__word {
+  position: absolute;
+  z-index: 2;
+  font-size: clamp(3.6rem, 11vw, 11rem);
+  color: var(--on-dark);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.atmo__word--l {
+  top: 12%;
+  left: var(--gutter);
+}
+.atmo__word--r {
+  bottom: 12%;
+  right: var(--gutter);
+  color: var(--gold-light);
+}
+.atmo__copy {
+  position: relative;
+  z-index: 3;
+  align-self: end;
+  padding-bottom: clamp(48px, 10vh, 110px);
+  display: grid;
+  gap: 22px;
+}
+.atmo__copy h2 em {
+  color: var(--gold-light);
+}
+.atmo__text {
+  max-width: 46ch;
+  color: var(--on-dark-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atmo__veil {
+    opacity: 1;
+  }
+  .atmo__word {
+    display: none;
+  }
+}
