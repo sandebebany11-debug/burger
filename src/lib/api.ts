@@ -1,4 +1,6 @@
 import type { AvailabilityResponse, BookingRequestInput } from '../../shared/booking'
+import { demoAvailability, demoRequest } from './demoApi'
+import { IS_DEMO } from './site'
 
 export class ApiError extends Error {
   status: number
@@ -25,7 +27,20 @@ export async function api<T>(path: string, init: RequestInit & { token?: string 
   return data as T
 }
 
-export const getAvailability = (month: string) => api<AvailabilityResponse>(`/availability?month=${month}`)
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export const sendRequest = (input: BookingRequestInput) =>
-  api<{ ok: true; id?: string }>('/requests', { method: 'POST', body: JSON.stringify(input) })
+export const getAvailability = async (month: string): Promise<AvailabilityResponse> => {
+  if (IS_DEMO) {
+    await pause(250)
+    return demoAvailability(month)
+  }
+  return api<AvailabilityResponse>(`/availability?month=${month}`)
+}
+
+export const sendRequest = async (input: BookingRequestInput) => {
+  if (IS_DEMO) {
+    await pause(700)
+    return demoRequest(input)
+  }
+  return api<{ ok: true; id?: string }>('/requests', { method: 'POST', body: JSON.stringify(input) })
+}

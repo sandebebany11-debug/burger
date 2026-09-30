@@ -5,6 +5,7 @@ import { Calendar, longDate } from '../components/Calendar'
 import { Monogram } from '../components/Monogram'
 import { business } from '../data/content'
 import { ApiError, getAvailability, sendRequest } from '../lib/api'
+import { IS_DEMO, siteUrl } from '../lib/site'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 
 type Phase = 'form' | 'sending' | 'done'
@@ -335,7 +336,7 @@ export function Booking() {
                   Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Terminanfrage gespeichert und
                   verwendet werden. Die Daten werden verschlüsselt gespeichert und spätestens 30 Tage nach dem Termin
                   gelöscht. Mehr in der{' '}
-                  <a href="/datenschutz/" className="link-u" target="_blank" rel="noopener">
+                  <a href={siteUrl('/datenschutz/')} className="link-u" target="_blank" rel="noopener">
                     Datenschutzerklärung
                   </a>
                   .
@@ -356,7 +357,11 @@ export function Booking() {
                   <Arrow />
                 </span>
               </button>
-              <p className="booking__fine">Unverbindliche Anfrage · Bestätigung durch den Salon</p>
+              <p className="booking__fine">
+                {IS_DEMO
+                  ? 'Vorschau: Anfragen werden hier nicht gesendet'
+                  : 'Unverbindliche Anfrage · Bestätigung durch den Salon'}
+              </p>
             </div>
           </form>
         )}

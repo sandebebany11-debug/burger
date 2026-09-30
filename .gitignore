@@ -26,3 +26,4 @@ dist-ssr
 # Lokale Terminanfragen (nur Entwicklung)
 .data
 .netlify
+dist-preview

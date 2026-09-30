@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { business, hours, nav } from '../data/content'
 import { gsap, lockScroll, prefersReducedMotion, scrollToTarget } from '../lib/motion'
+import { siteUrl } from '../lib/site'
 import { Arrow } from './Arrow'
 import { Magnetic } from './Magnetic'
 import { Monogram } from './Monogram'
@@ -129,7 +130,7 @@ export function Nav({ home = true }: Props) {
     history.replaceState(null, '', `#${id}`)
   }
 
-  const href = (id: string) => (home ? `#${id}` : `/#${id}`)
+  const href = (id: string) => (home ? `#${id}` : siteUrl(`/#${id}`))
   const today = new Date().getDay()
   const todayHours = hours.find((h) => h.weekday === today)
 
@@ -137,7 +138,7 @@ export function Nav({ home = true }: Props) {
     <>
       <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${dark ? 'is-dark' : ''} ${hidden && !open ? 'is-hidden' : ''} ${open ? 'is-open' : ''}`}>
         <div className="nav__inner">
-          <a href={home ? '#top' : '/'} className="nav__brand" onClick={(e) => go(e, 'top')} aria-label="Art of Hair by Simyan – zur Startseite">
+          <a href={home ? '#top' : siteUrl('/')} className="nav__brand" onClick={(e) => go(e, 'top')} aria-label="Art of Hair by Simyan – zur Startseite">
             <Monogram className="nav__mono" />
             <span className="nav__word">
               <span>Art of Hair</span>

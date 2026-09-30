@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { MONOGRAM_PATH, MONOGRAM_VIEWBOX } from '../data/monogram'
 import { business, hours } from '../data/content'
 import { gsap, prefersReducedMotion } from '../lib/motion'
+import { siteUrl } from '../lib/site'
 import { Button } from './Button'
 import { GoldDust } from './GoldDust'
 
@@ -60,7 +61,7 @@ export function Footer({ home = true }: { home?: boolean }) {
             <p className="h-md">
               Bereit für <em>Ihren neuen Look?</em>
             </p>
-            <Button href={home ? '#termin' : '/#termin'} variant="gold" cursor="Buchen">
+            <Button href={home ? '#termin' : siteUrl('/#termin')} variant="gold" cursor="Buchen">
               Termin anfragen
             </Button>
           </div>
@@ -126,10 +127,10 @@ export function Footer({ home = true }: { home?: boolean }) {
         <div className="footer__legal">
           <span>© {year} {business.name}</span>
           <nav aria-label="Rechtliches">
-            <a href="/impressum/" className="link-u">
+            <a href={siteUrl('/impressum/')} className="link-u">
               Impressum
             </a>
-            <a href="/datenschutz/" className="link-u">
+            <a href={siteUrl('/datenschutz/')} className="link-u">
               Datenschutz
             </a>
           </nav>

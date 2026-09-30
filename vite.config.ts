@@ -39,13 +39,18 @@ function devApi(): Plugin {
   }
 }
 
+// Vorschau-Build (npm run build:preview): relative Pfade, Demo-Termin-API, ohne Admin
+const demo = process.env.VITE_DEMO === '1'
+
 export default defineConfig({
   plugins: [react(), devApi()],
+  base: demo ? './' : '/',
   build: {
+    outDir: demo ? 'dist-preview' : 'dist',
     rollupOptions: {
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
-        admin: resolve(import.meta.dirname, 'admin/index.html'),
+        ...(demo ? {} : { admin: resolve(import.meta.dirname, 'admin/index.html') }),
         impressum: resolve(import.meta.dirname, 'impressum/index.html'),
         datenschutz: resolve(import.meta.dirname, 'datenschutz/index.html'),
       },

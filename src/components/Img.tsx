@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from 'react'
 import { images, type ImageId } from '../data/images.generated'
+import { asset } from '../lib/site'
 
 interface Props {
   id: ImageId
@@ -17,7 +18,7 @@ interface Props {
   tilt?: boolean
 }
 
-const srcSet = (id: string, widths: number[], ext: string) => widths.map((w) => `/img/${id}-${w}.${ext} ${w}w`).join(', ')
+const srcSet = (id: string, widths: number[], ext: string) => widths.map((w) => `${asset(`img/${id}-${w}.${ext}`)} ${w}w`).join(', ')
 
 /** Responsives Bild mit AVIF/WebP, Unschärfe-Platzhalter und Lazy Loading. */
 export function Img({ id, className = '', sizes = '100vw', priority, alt, style, focus, reveal, parallax, tilt }: Props) {
@@ -29,7 +30,7 @@ export function Img({ id, className = '', sizes = '100vw', priority, alt, style,
       <source type="image/avif" srcSet={srcSet(img.id, img.widths, 'avif')} sizes={sizes} />
       <source type="image/webp" srcSet={srcSet(img.id, img.widths, 'webp')} sizes={sizes} />
       <img
-        src={`/img/${img.id}-${largest}.webp`}
+        src={asset(`img/${img.id}-${largest}.webp`)}
         width={img.width}
         height={img.height}
         alt={alt ?? img.alt}
