@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { business } from "../data/content";
-import { gsap, prefersReducedMotion, stopScroll } from "../lib/motion";
+import { gsap, prefersReducedMotion, scrollToHash, stopScroll } from "../lib/motion";
 import Emblem from "./Emblem";
+import { OpenBadge, ScrollMouse } from "./Icons";
 import { Button, Lines, useGsap } from "./ui";
 import "./Hero.css";
 import { site } from "../lib/paths";
@@ -215,6 +216,7 @@ export default function Hero() {
               Entdecke Casa Ducale
             </Button>
           </div>
+          <OpenBadge className="hero__reveal hero__status" />
         </div>
 
         <div className="hero__caption" aria-hidden={!introDone}>
@@ -225,9 +227,17 @@ export default function Hero() {
         </div>
 
         <div className="hero__foot hero__reveal">
-          <span className="hero__scroll" aria-hidden="true">
-            <span />
-          </span>
+          <a
+            className="hero__scroll"
+            href="#restaurant"
+            aria-label="Nach unten scrollen"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHash("#restaurant");
+            }}
+          >
+            <ScrollMouse />
+          </a>
           <button className="hero__play label" type="button" onClick={togglePlay} aria-pressed={paused}>
             {paused ? "Video abspielen" : "Video pausieren"}
           </button>

@@ -137,16 +137,21 @@ export function Datenschutz() {
         <h2>4. Keine Cookies, kein Tracking</h2>
         <p>
           Diese Website setzt keine Cookies und verwendet keine Analyse- oder Werbedienste. Im Browser wird lediglich
-          technisch notwendig für die aktuelle Sitzung gespeichert, ob die Eingangsanimation bereits gezeigt wurde.
+          gespeichert, ob die Eingangsanimation in dieser Sitzung bereits gezeigt wurde und – falls Sie die Karte laden – Ihre Entscheidung zur Kartenanzeige.
         </p>
       </section>
 
       <section>
-        <h2>5. Schriftarten und Karten</h2>
+        <h2>5. Schriftarten und Karte</h2>
         <p>
-          Schriftarten werden lokal von unserem Server geladen; es findet keine Verbindung zu Google Fonts statt. Google
-          Maps ist nicht eingebettet – erst wenn Sie „Route planen“ anklicken, öffnen Sie Google Maps in einem neuen
-          Fenster, wofür die Datenschutzhinweise von Google gelten.
+          Schriftarten werden lokal von unserem Server geladen; es findet keine Verbindung zu Google Fonts statt.
+        </p>
+        <p>
+          Die Karte von Google Maps (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland) wird erst
+          geladen, wenn Sie auf „Karte hier anzeigen“ klicken. Erst dann werden Daten wie Ihre IP-Adresse an Google
+          übertragen (Art. 6 Abs. 1 lit. a DSGVO – Einwilligung). Ihre Entscheidung wird nur in Ihrem Browser gespeichert
+          und kann durch Löschen der Website-Daten widerrufen werden. Der Link „Route in Google Maps öffnen“ öffnet
+          Google Maps in einem neuen Fenster; dort gelten die Datenschutzhinweise von Google.
         </p>
       </section>
 

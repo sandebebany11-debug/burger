@@ -166,29 +166,19 @@ html.intro-done .intro {
   bottom: 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  min-height: 54px;
 }
 .hero__scroll {
-  position: relative;
-  width: 1px;
-  height: 46px;
-  background: var(--line-dark);
-  overflow: hidden;
-}
-.hero__scroll span {
   position: absolute;
-  inset: 0;
-  background: var(--gold);
-  animation: scroll-hint 2.4s var(--ease-in-out) infinite;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  padding: 6px;
+  color: var(--on-dark);
 }
-@keyframes scroll-hint {
-  0% {
-    transform: translateY(-100%);
-  }
-  60%,
-  100% {
-    transform: translateY(100%);
-  }
+.hero__status {
+  margin-top: 22px;
 }
 .hero__play {
   color: var(--on-dark-dim);
@@ -203,9 +193,6 @@ html.intro-done .intro {
 @media (max-width: 899px) {
   .hero__foot {
     justify-content: flex-end;
-  }
-  .hero__scroll {
-    display: none;
   }
   .hero__ctas .btn {
     flex: 1 1 auto;
