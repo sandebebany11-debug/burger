@@ -4,6 +4,7 @@ import { gsap, scrollToHash } from "../lib/motion";
 import Emblem from "./Emblem";
 import { Button, useGsap } from "./ui";
 import "./Footer.css";
+import { site } from "../lib/paths";
 
 export default function Footer() {
   const root = useRef<HTMLElement>(null);
@@ -101,10 +102,10 @@ export default function Footer() {
             © {year} {business.name} · {business.tagline}
           </p>
           <div className="footer__legal">
-            <a className="link" href="/impressum/">
+            <a className="link" href={site("impressum/index.html")}>
               Impressum
             </a>
-            <a className="link" href="/datenschutz/">
+            <a className="link" href={site("datenschutz/index.html")}>
               Datenschutz
             </a>
             <a

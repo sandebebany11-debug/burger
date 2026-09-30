@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { images, type ImageName } from "../data/images.gen";
 import { gsap, isFinePointer, prefersReducedMotion, scrollToHash } from "../lib/motion";
+import { site } from "../lib/paths";
 
 // ------------------------------------------------------------------ Picture
 
@@ -20,8 +21,9 @@ export function Picture({ name, alt, sizes, className, imgClassName, priority, f
   const img = images[name];
   const [loaded, setLoaded] = useState(false);
   const ref = useRef<HTMLImageElement>(null);
-  const set = (ext: string) => img.widths.map((w) => `${img.src}-${w}.${ext} ${w}w`).join(", ");
-  const fallback = `${img.src}-${img.widths[Math.min(1, img.widths.length - 1)]}.jpg`;
+  const base = site(img.src);
+  const set = (ext: string) => img.widths.map((w) => `${base}-${w}.${ext} ${w}w`).join(", ");
+  const fallback = `${base}-${img.widths[Math.min(1, img.widths.length - 1)]}.jpg`;
 
   useEffect(() => {
     if (ref.current?.complete) setLoaded(true);

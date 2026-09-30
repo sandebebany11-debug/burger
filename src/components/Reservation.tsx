@@ -6,6 +6,7 @@ import { gsap, prefersReducedMotion } from "../lib/motion";
 import { OCCASION_EVENT } from "./Events";
 import { Button, Lines, revealOnScroll, useGsap } from "./ui";
 import "./Reservation.css";
+import { site } from "../lib/paths";
 
 type Phase = "form" | "sending" | "sent";
 
@@ -448,7 +449,7 @@ export default function Reservation() {
                   <span>
                     Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Reservierungsanfrage gespeichert werden.
                     Details in der{" "}
-                    <a className="link link--static" href="/datenschutz/" target="_blank" rel="noopener">
+                    <a className="link link--static" href={site("datenschutz/index.html")} target="_blank" rel="noopener">
                       Datenschutzerklärung
                     </a>
                     .

@@ -96,7 +96,7 @@ for (const file of files) {
 const body = entries
   .map(
     (e) =>
-      `  "${e.name}": { src: "/media/img/${e.name}", width: ${e.width}, height: ${e.height}, widths: [${e.widths.join(", ")}], focus: "${e.focus}", lqip: "${e.lqip}" },`,
+      `  "${e.name}": { src: "media/img/${e.name}", width: ${e.width}, height: ${e.height}, widths: [${e.widths.join(", ")}], focus: "${e.focus}", lqip: "${e.lqip}" },`,
   )
   .join("\n");
 

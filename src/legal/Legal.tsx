@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { business, fullAddress } from "../data/content";
 import Emblem from "../components/Emblem";
 import { DEFAULT_SETTINGS } from "../../shared/reservations";
+import { site } from "../lib/paths";
 
 function Todo({ children }: { children: ReactNode }) {
   return <mark className="todo">{children}</mark>;
@@ -11,11 +12,11 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
   return (
     <>
       <header className="legal__bar">
-        <a href="/" className="legal__brand">
+        <a href={site("index.html")} className="legal__brand">
           <Emblem className="legal__lily" title="" />
           <span>Casa Ducale</span>
         </a>
-        <a href="/" className="link">
+        <a href={site("index.html")} className="link">
           ← Zur Startseite
         </a>
       </header>
@@ -24,10 +25,10 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
         {children}
       </main>
       <footer className="legal__foot container">
-        <a className="link" href="/impressum/">
+        <a className="link" href={site("impressum/index.html")}>
           Impressum
         </a>
-        <a className="link" href="/datenschutz/">
+        <a className="link" href={site("datenschutz/index.html")}>
           Datenschutz
         </a>
       </footer>

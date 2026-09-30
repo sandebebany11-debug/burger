@@ -1,16 +1,15 @@
 // Generates favicon, touch icon, the sheen mask and the Open Graph image from
 // the lily geometry in src/brand/lily.ts.   npm run brand
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import sharp from "sharp";
 import { lilySvg } from "../src/brand/lily.ts";
 
 const GOLD = "#b8914f";
 const INK = "#14110e";
 
-await mkdir("public/brand", { recursive: true });
 
 // mask for the gold sheen (solid shape)
-await writeFile("public/brand/lily-mask.svg", lilySvg("#000"));
+await writeFile("src/brand/lily-mask.svg", lilySvg("#000"));
 
 // favicon: gold lily on an ink tile, readable at 16px
 const lilyInner = lilySvg(GOLD).replace(/^<svg[^>]*>|<\/svg>$/g, "");

@@ -1,4 +1,5 @@
 import type { DayState, FieldErrors, ReservationInput, SlotState } from "../../shared/reservations";
+import { site } from "./paths";
 
 export type Meta = { maxPartySize: number; bookingHorizonDays: number; today: string };
 export type MonthResponse = Meta & { month: string; days: Record<string, DayState> };
@@ -42,10 +43,10 @@ async function request<T>(url: string, init?: RequestInit, timeoutMs = 12000): P
 }
 
 export const api = {
-  month: (month: string) => request<MonthResponse>(`/api/availability?month=${month}`),
-  day: (date: string) => request<DayResponse>(`/api/availability?date=${date}`),
+  month: (month: string) => request<MonthResponse>(site(`api/availability?month=${month}`)),
+  day: (date: string) => request<DayResponse>(site(`api/availability?date=${date}`)),
   reserve: (input: ReservationInput) =>
-    request<{ id: string; status: string }>("/api/reservations", { method: "POST", body: JSON.stringify(input) }),
+    request<{ id: string; status: string }>(site("api/reservations"), { method: "POST", body: JSON.stringify(input) }),
 };
 
 // ------------------------------------------------------------------ dates

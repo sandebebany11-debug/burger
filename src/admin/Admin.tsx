@@ -10,6 +10,7 @@ import {
 } from "../../shared/reservations";
 import Emblem from "../components/Emblem";
 import { formatDateLong } from "../lib/api";
+import { site } from "../lib/paths";
 
 const TOKEN_KEY = "cd-admin-token";
 
@@ -18,7 +19,7 @@ class AuthError extends Error {}
 async function call<T>(path: string, token: string | null, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`/api/admin/${path}`, {
+    res = await fetch(site(`api/admin/${path}`), {
       ...init,
       headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
     });

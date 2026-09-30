@@ -4,6 +4,7 @@ import { gsap, prefersReducedMotion, stopScroll } from "../lib/motion";
 import Emblem from "./Emblem";
 import { Button, Lines, useGsap } from "./ui";
 import "./Hero.css";
+import { site } from "../lib/paths";
 
 const INTRO_SEEN = "cd-intro-seen";
 
@@ -178,11 +179,11 @@ export default function Hero() {
             loop
             playsInline
             preload="auto"
-            poster="/media/video/hero-poster.webp"
+            poster={site("media/video/hero-poster.webp")}
             aria-hidden="true"
           >
-            <source src="/media/video/hero.webm" type="video/webm" />
-            <source src="/media/video/hero.mp4" type="video/mp4" />
+            <source src={site("media/video/hero.webm")} type="video/webm" />
+            <source src={site("media/video/hero.mp4")} type="video/mp4" />
           </video>
           <div className="hero__tint" />
           <div className="hero__shade" />
