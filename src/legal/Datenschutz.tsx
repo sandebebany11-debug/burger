@@ -25,12 +25,12 @@ export function Datenschutz() {
 
       <h2>2. Hosting und Server-Logfiles</h2>
       <p>
-        Diese Website wird bei Netlify, Inc. (512 2nd Street, Suite 200, San Francisco, CA 94107, USA) gehostet. Beim
-        Aufruf verarbeitet der Hoster technisch notwendige Daten (IP-Adresse, Datum und Uhrzeit, aufgerufene Seite,
-        Browsertyp) in Server-Logfiles, um die Website sicher und stabil auszuliefern. Rechtsgrundlage ist Art. 6 Abs. 1
-        lit. f DSGVO. Mit Netlify besteht ein Vertrag zur Auftragsverarbeitung; Übermittlungen in die USA erfolgen auf
-        Grundlage des EU-US Data Privacy Framework bzw. von Standardvertragsklauseln.{' '}
-        <span className="todo">[bitte prüfen, falls ein anderer Hoster genutzt wird]</span>
+        Diese Website wird bei Hostinger gehostet (UAB Hostinger International, Švitrigailos str. 34, 03230 Vilnius,
+        Litauen). Die Server befinden sich in der Europäischen Union. Beim Aufruf der Website werden automatisch
+        Informationen in Server-Logfiles gespeichert: IP-Adresse, Datum und Uhrzeit des Zugriffs, aufgerufene
+        Seiten/Dateien, HTTP-Statuscode, Browsertyp und -version, Betriebssystem sowie die Referrer-URL. Diese Daten
+        dienen dem sicheren und stabilen Betrieb der Website; Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.{' '}
+        <span className="todo">[prüfen: Wo läuft künftig das Terminsystem? Falls bei einem anderen Anbieter, hier ergänzen]</span>
       </p>
 
       <h2>3. Terminanfragen über das Online-Formular</h2>

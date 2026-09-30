@@ -1,9 +1,21 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Button } from '../components/Button'
+import { GoldDust } from '../components/GoldDust'
 import { Img } from '../components/Img'
 import { business } from '../data/content'
 import type { ImageId } from '../data/images.generated'
 import { gsap, isFinePointer, prefersReducedMotion } from '../lib/motion'
+
+/** Zerlegt ein Wort in einzeln animierbare Buchstaben. */
+const Chars = ({ text }: { text: string }) => (
+  <span aria-hidden="true">
+    {text.split('').map((c, i) => (
+      <span key={i} className="hero__char">
+        {c === ' ' ? '\u00a0' : c}
+      </span>
+    ))}
+  </span>
+)
 
 const SLIDES: ImageId[] = ['simyan-foehnen', 'balayage-blond', 'herren-taper', 'braut-halfup']
 
@@ -18,7 +30,8 @@ export function Hero({ start }: { start: boolean }) {
   useLayoutEffect(() => {
     if (prefersReducedMotion()) return
     const ctx = gsap.context(() => {
-      gsap.set('.hero__line > span', { yPercent: 115 })
+      gsap.set('.hero__char', { yPercent: 120, rotation: 8 })
+      gsap.set('.hero__by', { yPercent: 120 })
       gsap.set('.hero__media', { clipPath: 'inset(18% 12% 18% 12%)' })
       gsap.set('.hero__media-inner', { scale: 1.35 })
       gsap.set('.hero__fade', { autoAlpha: 0, y: 24 })
@@ -34,7 +47,8 @@ export function Hero({ start }: { start: boolean }) {
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
       tl.to('.hero__media', { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.8, ease: 'expo.inOut' }, 0)
         .to('.hero__media-inner', { scale: 1, duration: 2.6 }, 0.2)
-        .to('.hero__line > span', { yPercent: 0, duration: 1.5, stagger: 0.09 }, 0.35)
+        .to('.hero__char', { yPercent: 0, rotation: 0, duration: 1.4, stagger: 0.045 }, 0.35)
+        .to('.hero__by', { yPercent: 0, duration: 1.4 }, 0.8)
         .to('.hero__rule', { scaleX: 1, duration: 1.6, ease: 'expo.inOut' }, 0.6)
         .to('.hero__fade', { autoAlpha: 1, y: 0, duration: 1.2, stagger: 0.08 }, 0.9)
 
@@ -79,20 +93,22 @@ export function Hero({ start }: { start: boolean }) {
 
   return (
     <section ref={root} id="top" className="hero" aria-labelledby="hero-title">
+      <GoldDust />
+      <div className="hero__glow" aria-hidden="true" />
       <div className="hero__grid wrap">
         <p className="hero__kicker hero__fade">
           Friseurmeister-Salon <span aria-hidden="true">·</span> Leverkusen-{business.district}
         </p>
 
-        <h1 id="hero-title" className="hero__title display">
+        <h1 id="hero-title" className="hero__title display" aria-label="Art of Hair by Simyan">
           <span className="hero__line">
-            <span>Art of</span>
+            <Chars text="Art of" />
           </span>
           <span className="hero__line hero__line--indent">
-            <span>Hair</span>
+            <Chars text="Hair" />
           </span>
           <span className="hero__line hero__line--by">
-            <span>
+            <span aria-hidden="true" className="hero__by">
               <em>by Simyan</em>
             </span>
           </span>

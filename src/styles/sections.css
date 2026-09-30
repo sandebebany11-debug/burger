@@ -121,7 +121,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(244, 239, 231, 0.72);
+  background: rgba(16, 14, 12, 0.66);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom: 1px solid var(--line);
@@ -170,7 +170,7 @@
   align-items: center;
   gap: 0.75rem;
   margin-right: auto;
-  color: var(--ink);
+  color: var(--fg);
 }
 .nav__mono {
   width: 42px;
@@ -211,7 +211,7 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--fg);
   opacity: 0.72;
   transition: opacity 0.3s;
 }
@@ -370,7 +370,7 @@
   align-self: center;
   margin: 0;
   font-size: clamp(4.2rem, 13.2vw, 15.5rem);
-  color: var(--ink);
+  color: var(--fg);
   pointer-events: none;
 }
 .hero__line {
@@ -402,7 +402,7 @@
   min-height: 58vh;
   margin-top: 1vh;
   overflow: hidden;
-  background: var(--paper);
+  background: var(--bg-2);
   border-radius: 999px 999px 0 0;
 }
 .hero__media-move {
@@ -526,7 +526,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--ink);
+  background: var(--gold);
   animation: scroll-line 2.2s var(--ease-in-out) infinite;
 }
 @keyframes scroll-line {
@@ -653,7 +653,7 @@
   top: -6vw;
   width: 44vw;
   max-width: 720px;
-  color: var(--paper);
+  color: rgba(207, 171, 112, 0.06);
   z-index: 0;
   pointer-events: none;
 }
@@ -679,7 +679,7 @@
   bottom: -10%;
   width: 46%;
   aspect-ratio: 4 / 5;
-  border: 8px solid var(--cream);
+  border: 8px solid var(--bg);
 }
 .story__text {
   position: relative;
@@ -691,7 +691,7 @@
   max-width: 34rem;
 }
 .story__body strong {
-  color: var(--ink);
+  color: var(--fg);
   font-weight: 600;
 }
 .story__body {
@@ -745,7 +745,7 @@
    ========================================================================== */
 
 .services {
-  background: var(--paper);
+  background: var(--bg-2);
 }
 .services__head {
   margin-bottom: clamp(3rem, 6vw, 6rem);
@@ -816,7 +816,7 @@
     transform 0.8s var(--ease-out);
 }
 .service.is-active .service__title {
-  color: var(--ink);
+  color: var(--fg);
   transform: translateX(1.25rem);
 }
 .service.is-active .service__num,
@@ -908,7 +908,7 @@
     transform: none;
   }
   .service__title {
-    color: var(--ink);
+    color: var(--fg);
   }
   .service.is-active .service__title {
     transform: none;
@@ -1271,7 +1271,7 @@
   bottom: 0;
   width: 44%;
   aspect-ratio: 3 / 4;
-  border: 8px solid var(--cream);
+  border: 8px solid var(--bg);
 }
 .km__tag {
   position: absolute;
@@ -1340,7 +1340,7 @@
    ========================================================================== */
 
 .team {
-  background: var(--paper);
+  background: var(--bg-2);
 }
 .team__head {
   margin-bottom: clamp(3rem, 7vw, 7rem);
@@ -1546,7 +1546,7 @@
 }
 .prices__tabs button.is-active,
 .prices__tabs button:hover {
-  color: var(--ink);
+  color: var(--fg);
 }
 .prices__indicator {
   position: absolute;
@@ -2203,7 +2203,7 @@
 }
 .hours tr.is-today th,
 .hours tr.is-today td {
-  color: var(--ink);
+  color: var(--fg);
   font-weight: 600;
 }
 .hours__today {
@@ -2374,8 +2374,8 @@
   box-shadow:
     0 0 0 1px rgba(244, 239, 231, 0.16),
     0 12px 40px rgba(21, 18, 15, 0.25) !important;
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--gold);
+  color: var(--ink);
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.16em;
@@ -2412,7 +2412,7 @@
 }
 .legal p,
 .legal li {
-  color: var(--ink-3);
+  color: rgba(241, 235, 225, 0.78);
   line-height: 1.75;
 }
 .legal a {
@@ -2421,13 +2421,14 @@
 }
 .legal .todo {
   padding: 0.1rem 0.4rem;
-  background: #f3e3b5;
+  color: var(--ink);
+  background: #e9cf8f;
   font-size: 0.9em;
 }
 .legal .notice {
   padding: 1.25rem 1.5rem;
   border-left: 3px solid var(--gold);
-  background: var(--paper);
+  background: var(--bg-2);
 }
 
 /* ==========================================================================
@@ -2438,7 +2439,7 @@
   overflow: hidden;
   padding: clamp(1.5rem, 3vw, 2.75rem) 0;
   border-block: 1px solid var(--line);
-  background: var(--cream);
+  background: var(--bg);
 }
 .marquee.on-dark {
   border-color: var(--line-light);
@@ -2475,4 +2476,316 @@
   height: 0.28em;
   fill: var(--gold);
   flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Animations-Ebene (dunkle Edition)
+   ========================================================================== */
+
+/* Goldstaub */
+.gold-dust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero,
+.footer {
+  isolation: isolate;
+}
+.hero__grid,
+.footer .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* Warmes Licht im Hero */
+.hero__glow {
+  position: absolute;
+  z-index: 0;
+  right: 6%;
+  top: 8%;
+  width: 60vw;
+  max-width: 900px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(207, 171, 112, 0.18), rgba(207, 171, 112, 0.04) 45%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  animation: glow-breathe 9s ease-in-out infinite;
+}
+@keyframes glow-breathe {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.12) translate(-3%, 4%);
+    opacity: 1;
+  }
+}
+
+/* Hero-Buchstaben */
+.hero__char {
+  display: inline-block;
+  will-change: transform;
+}
+.hero__line > span[aria-hidden] {
+  display: inline-block;
+}
+.hero__by {
+  display: inline-block;
+}
+.hero__by em {
+  display: inline-block;
+  animation: float-soft 6s ease-in-out infinite;
+}
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.08em);
+  }
+}
+.hero__media {
+  box-shadow: 0 40px 120px -30px rgba(0, 0, 0, 0.8);
+}
+.hero__media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(207, 171, 112, 0.25);
+  pointer-events: none;
+}
+
+/* Goldener Bild-Wischer */
+.reveal-wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(160deg, #8a6a3c, #e6c992 45%, #b48e57);
+  transform: scaleY(0);
+  pointer-events: none;
+}
+.img[data-veiled] {
+  background-image: none !important;
+}
+
+/* Schimmerndes Gold in Überschriften */
+.h-xl em,
+.h-lg em,
+.h-md em,
+.team__owner-name em,
+.hero__by em,
+.manifesto__word:nth-child(n + 13) {
+  background: linear-gradient(100deg, #b48e57 0%, #cfab70 30%, #f6e3b8 45%, #cfab70 60%, #a07c47 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  animation: shimmer 7s ease-in-out infinite;
+}
+.h-xl em .split-line > span,
+.h-lg em .split-line > span,
+.h-md em .split-line > span,
+.team__owner-name em .split-line > span {
+  background: linear-gradient(100deg, #b48e57 0%, #cfab70 30%, #f6e3b8 45%, #cfab70 60%, #a07c47 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0% 0;
+  }
+}
+
+/* Scroll-Fortschritt */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 810;
+  height: 2px;
+  pointer-events: none;
+}
+.scroll-progress div {
+  height: 100%;
+  background: linear-gradient(90deg, #8a6a3c, #e6c992, #b48e57);
+  transform: scaleX(0);
+  transform-origin: left;
+  box-shadow: 0 0 12px rgba(230, 201, 146, 0.6);
+}
+
+/* Lichtkegel unter der Maus */
+.spotlight {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  width: 700px;
+  height: 700px;
+  margin: -350px 0 0 -350px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(207, 171, 112, 0.09), transparent 62%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* 3D-Neigung */
+[data-tilt] {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Leistungen: goldene Linie läuft beim Aktivieren durch */
+.service__row {
+  position: relative;
+}
+.service__row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s var(--ease-out);
+}
+.service.is-active .service__row::after {
+  transform: scaleX(1);
+}
+.service.is-active .service__title {
+  text-shadow: 0 0 40px rgba(207, 171, 112, 0.25);
+}
+
+/* Preiszeilen */
+.price-row {
+  position: relative;
+  transition: padding 0.6s var(--ease-out);
+}
+.price-row::before {
+  content: '';
+  position: absolute;
+  inset: 0 -1rem;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(207, 171, 112, 0.08), transparent);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.price-row:hover::before {
+  opacity: 1;
+}
+.price-row:hover .price-row__name h3 {
+  transform: translateX(0.5rem);
+  color: var(--gold-light);
+}
+.price-row__name h3 {
+  transition:
+    transform 0.7s var(--ease-out),
+    color 0.4s;
+}
+.prices__panel {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Riesiges Monogramm im Terminbereich */
+.booking {
+  overflow: hidden;
+}
+.booking__mono {
+  position: absolute;
+  right: -8vw;
+  top: 10%;
+  width: 60vw;
+  max-width: 900px;
+  color: rgba(207, 171, 112, 0.045);
+  pointer-events: none;
+  animation: mono-drift 18s ease-in-out infinite;
+}
+.booking .wrap {
+  position: relative;
+  z-index: 1;
+}
+@keyframes mono-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-4%) rotate(2deg);
+  }
+}
+
+/* Footer-Buchstaben reagieren auf Hover */
+.footer__letter {
+  display: inline-block;
+  transition:
+    transform 0.6s var(--ease-out),
+    color 0.4s;
+  transition-delay: calc(var(--i) * 18ms);
+}
+.footer__brand:hover .footer__letter {
+  transform: translateY(-0.06em);
+  color: var(--gold-light);
+}
+.footer__brand-line > span {
+  display: block;
+}
+
+/* Kalendertage & Buttons: sanftes Gold-Glühen */
+.cal__day.is-available:not(:disabled):hover,
+.cal__day.is-partial:not(:disabled):hover {
+  box-shadow: 0 0 0 1px rgba(207, 171, 112, 0.5), 0 0 24px rgba(207, 171, 112, 0.2);
+}
+.btn--gold,
+.mobile-cta__book {
+  box-shadow: 0 10px 40px -10px rgba(207, 171, 112, 0.55);
+}
+
+/* Galerie: goldener Rahmen beim Hover */
+.gallery__item {
+  position: relative;
+}
+.gallery__item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(207, 171, 112, 0);
+  transition: box-shadow 0.6s;
+  pointer-events: none;
+}
+.gallery__item:hover::after {
+  box-shadow: inset 0 0 0 1px rgba(207, 171, 112, 0.6);
+}
+.member__frame {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__glow,
+  .booking__mono,
+  .hero__by em {
+    animation: none;
+  }
+}
+@media (max-width: 600px) {
+  .footer__brand-by i {
+    display: none;
+  }
 }

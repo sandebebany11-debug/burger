@@ -3,6 +3,7 @@ import { MONOGRAM_PATH, MONOGRAM_VIEWBOX } from '../data/monogram'
 import { business, hours } from '../data/content'
 import { gsap, prefersReducedMotion } from '../lib/motion'
 import { Button } from './Button'
+import { GoldDust } from './GoldDust'
 
 const SUBPATHS = MONOGRAM_PATH.split(/(?=M)/).filter(Boolean)
 
@@ -39,6 +40,7 @@ export function Footer({ home = true }: { home?: boolean }) {
 
   return (
     <footer ref={root} className="footer on-dark grain">
+      <GoldDust density={0.6} />
       <div className="wrap">
         <div className="footer__top">
           <svg className="footer__mono" viewBox={MONOGRAM_VIEWBOX} aria-hidden="true">
@@ -106,7 +108,13 @@ export function Footer({ home = true }: { home?: boolean }) {
 
         <p className="footer__brand" aria-label="Art of Hair by Simyan">
           <span className="footer__brand-line" aria-hidden="true">
-            <span>Art of Hair</span>
+            <span>
+              {'Art of Hair'.split('').map((c, i) => (
+                <span key={i} className="footer__letter" style={{ ['--i' as string]: i }}>
+                  {c === ' ' ? '\u00a0' : c}
+                </span>
+              ))}
+            </span>
           </span>
           <span className="footer__brand-line footer__brand-by" aria-hidden="true">
             <span>

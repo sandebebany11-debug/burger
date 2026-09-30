@@ -46,7 +46,7 @@ export function Services() {
       <div className="wrap services__body">
         <ol className="services__list">
           {services.map((s, i) => (
-            <li key={s.title} className={`service ${i === active ? 'is-active' : ''}`}>
+            <li key={s.title} className={`service ${i === active ? 'is-active' : ''}`} style={{ ['--i' as string]: i }}>
               <button
                 type="button"
                 className="service__row"

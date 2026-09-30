@@ -51,6 +51,7 @@ export function Gallery() {
                 key={id}
                 type="button"
                 className="gallery__item"
+                data-tilt
                 data-cursor="Ansehen"
                 aria-label={`Bild vergrößern: ${images[id].alt}`}
                 onClick={(e) => setOpen({ index: i, from: e.currentTarget.getBoundingClientRect() })}

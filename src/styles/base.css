@@ -15,6 +15,12 @@
   --gold-light: #dcc08e;
   --gold-deep: #8a6a3c;
   --line: rgba(21, 18, 15, 0.12);
+
+  /* Dunkles Farbschema (Standard) */
+  --bg: #100e0c;
+  --bg-2: #17140f;
+  --bg-deep: #090807;
+  --fg: #f1ebe1;
   --line-light: rgba(244, 239, 231, 0.14);
 
   --ok: #6f8f5f;
@@ -61,8 +67,8 @@ html.lenis body {
 
 body {
   margin: 0;
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--sans);
   font-size: 1rem;
   line-height: 1.6;
@@ -268,7 +274,7 @@ button {
 }
 
 .on-dark {
-  background: var(--ink);
+  background: var(--bg-deep);
   color: var(--cream);
 }
 
@@ -398,7 +404,7 @@ button {
   overflow: hidden;
   background-size: cover;
   background-position: center;
-  background-color: var(--paper);
+  background-color: var(--bg-2);
 }
 .img picture,
 .img img {
@@ -502,4 +508,34 @@ button {
 /* Dekorative Elemente dürfen nie horizontales Scrollen erzeugen (iOS Safari) */
 main {
   overflow-x: clip;
+}
+
+/* ==========================================================================
+   Dunkles Farbschema – Tokens für Text auf dunklem Grund
+   ========================================================================== */
+:root {
+  --muted: rgba(241, 235, 225, 0.62);
+  --line: rgba(241, 235, 225, 0.12);
+  --gold-deep: #cfab70;
+  --stone: rgba(241, 235, 225, 0.3);
+  color-scheme: dark;
+}
+.btn {
+  --btn-bg: var(--cream);
+  --btn-fg: var(--ink);
+  --btn-fill: var(--gold);
+}
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--fg);
+  --btn-fill: var(--cream);
+}
+.btn--ghost:hover,
+.btn--ghost:focus-visible {
+  color: var(--ink);
+}
+.btn--gold {
+  --btn-bg: var(--gold);
+  --btn-fg: var(--ink);
+  --btn-fill: var(--cream);
 }

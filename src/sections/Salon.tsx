@@ -66,21 +66,21 @@ export function Salon() {
             <p className="lead">
               2025 hat Friseurmeister <strong>Simyan Chicho</strong> den Salon in der Lützenkirchener Straße
               übernommen – zuvor das Haaratelier Jennifer Hapke – und ihm als <em>Art of Hair by Simyan</em> ein
-              neues Gesicht gegeben.
+              neues Gesicht gegeben. Zuvor war er mehrere Jahre im Friseursalon Stephan in Leverkusen-Schlebusch tätig.
             </p>
             <p>
-              Heute arbeitet hier ein Team aus Stylistinnen, Stylisten und Auszubildenden für Damen, Herren und
-              Kinder. Unser Schwerpunkt: präzise Schnitte und Colorationen – von feinen Strähnen bis zur weichen
-              Balayage. Gepflegt wird mit Produkten von Kevin.Murphy.
+              Wir bieten das komplette Spektrum moderner Friseurleistungen – vom klassischen Damen- und
+              Herrenhaarschnitt über professionelle Bartpflege bis hin zu aufwendigen Farbtechniken. Unser
+              Schwerpunkt liegt auf Colorationen, Strähnen und Balayage.
             </p>
           </div>
           <dl className="story__facts" data-stagger>
             <div>
-              <dt>2025</dt>
+              <dt data-count="2025" data-count-from="1990">2025</dt>
               <dd>Neustart als Art of Hair</dd>
             </div>
             <div>
-              <dt>6</dt>
+              <dt data-count="6">6</dt>
               <dd>Menschen im Team</dd>
             </div>
             <div>

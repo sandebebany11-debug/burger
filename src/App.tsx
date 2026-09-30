@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Ambient } from './components/Ambient'
 import { Cursor } from './components/Cursor'
 import { Footer } from './components/Footer'
 import { Intro } from './components/Intro'
@@ -48,6 +49,7 @@ export function App() {
       </a>
       {!introDone && <Intro onReveal={onReveal} onDone={onDone} />}
       <Cursor />
+      <Ambient />
       <Nav />
       <main id="main" ref={main}>
         <Hero start={heroStart} />

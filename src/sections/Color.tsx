@@ -79,7 +79,7 @@ export function Color() {
         </div>
 
         {colorWorks.map((w, i) => (
-          <figure key={w.image} className={`color__card color__card--${i % 3}`}>
+          <figure key={w.image} className={`color__card color__card--${i % 3}`} data-tilt>
             <Img id={w.image} sizes="(min-width: 900px) 34vw, 80vw" />
             <figcaption>
               <span className="num">{String(i + 1).padStart(2, '0')}</span>

@@ -31,7 +31,7 @@ export function Team() {
           {team.map((m, i) => (
             <li key={m.name} className={`member member--${i}`}>
               <figure>
-                <div className="member__frame">
+                <div className="member__frame" data-tilt>
                   <Img id={m.image} reveal sizes="(min-width: 900px) 24vw, (min-width: 600px) 45vw, 88vw" />
                 </div>
                 <figcaption>
@@ -45,7 +45,7 @@ export function Team() {
 
         <figure className="team__group">
           <Img id="team-salon" reveal parallax={0.1} sizes="(min-width: 1200px) 80vw, 100vw" />
-          <figcaption data-reveal="fade">Ein Team. Eine Handschrift.</figcaption>
+          <figcaption data-reveal="fade">Unser Team</figcaption>
         </figure>
       </div>
     </section>

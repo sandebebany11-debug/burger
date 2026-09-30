@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { BOOKABLE_SERVICES, BOOKING_HORIZON_DAYS, addDays, todayInBerlin, type PublicDay } from '../../shared/booking'
 import { Arrow } from '../components/Arrow'
 import { Calendar, longDate } from '../components/Calendar'
+import { Monogram } from '../components/Monogram'
 import { business } from '../data/content'
 import { ApiError, getAvailability, sendRequest } from '../lib/api'
 import { gsap, prefersReducedMotion } from '../lib/motion'
@@ -147,6 +148,7 @@ export function Booking() {
 
   return (
     <section id="termin" className="booking section on-dark grain" aria-labelledby="booking-title">
+      <Monogram className="booking__mono" />
       <div className="wrap booking__layout">
         <header className="booking__head">
           <p className="eyebrow">Termin</p>

@@ -7,7 +7,8 @@ import { splitWords } from './split'
  *
  *   data-reveal="text"    Wörter gleiten aus einer Maske nach oben
  *   data-reveal="fade"    sanftes Einblenden von unten
- *   data-reveal="image"   Bild wird per clip-path enthüllt, Inhalt zoomt zurück
+ *   data-reveal="image"   goldener Wischer gibt das Bild frei, Inhalt zoomt zurück
+ *   data-count="6"       Zahl zählt beim Erscheinen hoch
  *   data-reveal="line"    Linie zeichnet sich von links nach rechts
  *   data-stagger          Kinder erscheinen nacheinander
  *   data-parallax="0.2"   Parallax beim Scrollen (Anteil der Höhe)
@@ -42,13 +43,37 @@ export function useScrollAnimations(root: RefObject<HTMLElement | null>, deps: u
 
       el.querySelectorAll<HTMLElement>('[data-reveal="image"]').forEach((node) => {
         const inner = node.querySelector('picture, img')
+        // Goldener Wischer läuft vor dem Bild durch
+        let wipe = node.querySelector<HTMLElement>(':scope > .reveal-wipe')
+        if (!wipe) {
+          wipe = document.createElement('span')
+          wipe.className = 'reveal-wipe'
+          wipe.setAttribute('aria-hidden', 'true')
+          node.appendChild(wipe)
+        }
+        const media = node.querySelectorAll(':scope > picture, :scope > .img__parallax')
+        gsap.set(media, { autoAlpha: 0 })
+        node.dataset.veiled = ''
         const tl = gsap.timeline({ scrollTrigger: { trigger: node, start: 'top 85%', once: true } })
-        tl.fromTo(
-          node,
-          { clipPath: 'inset(100% 0% 0% 0%)' },
-          { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut' },
-        )
-        if (inner) tl.from(inner, { scale: 1.35, duration: 2, ease: 'expo.out' }, 0.15)
+        tl.fromTo(wipe, { scaleY: 0, transformOrigin: '50% 100%' }, { scaleY: 1, duration: 0.75, ease: 'expo.inOut' })
+          .set(media, { autoAlpha: 1 })
+          .call(() => delete node.dataset.veiled)
+          .set(wipe, { transformOrigin: '50% 0%' })
+          .to(wipe, { scaleY: 0, duration: 1, ease: 'expo.inOut' })
+        if (inner) tl.fromTo(inner, { scale: 1.3 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0.75)
+      })
+
+      el.querySelectorAll<HTMLElement>('[data-count]').forEach((node) => {
+        const target = Number(node.dataset.count)
+        const from = Number(node.dataset.countFrom ?? 0)
+        const obj = { v: from }
+        gsap.to(obj, {
+          v: target,
+          duration: 2.2,
+          ease: 'expo.out',
+          onUpdate: () => (node.textContent = String(Math.round(obj.v))),
+          scrollTrigger: { trigger: node, start: 'top 90%', once: true },
+        })
       })
 
       el.querySelectorAll<HTMLElement>('[data-reveal="line"]').forEach((node) => {

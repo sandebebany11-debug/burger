@@ -13,12 +13,14 @@ interface Props {
   focus?: string
   reveal?: boolean
   parallax?: number
+  /** 3D-Neigung bei Mausbewegung */
+  tilt?: boolean
 }
 
 const srcSet = (id: string, widths: number[], ext: string) => widths.map((w) => `/img/${id}-${w}.${ext} ${w}w`).join(', ')
 
 /** Responsives Bild mit AVIF/WebP, Unschärfe-Platzhalter und Lazy Loading. */
-export function Img({ id, className = '', sizes = '100vw', priority, alt, style, focus, reveal, parallax }: Props) {
+export function Img({ id, className = '', sizes = '100vw', priority, alt, style, focus, reveal, parallax, tilt }: Props) {
   const img = images[id]
   const [loaded, setLoaded] = useState(false)
   const largest = img.widths[img.widths.length - 1]
@@ -48,6 +50,7 @@ export function Img({ id, className = '', sizes = '100vw', priority, alt, style,
       className={`img ${className}`}
       style={{ backgroundImage: loaded ? undefined : `url(${img.lqip})`, ...style }}
       data-reveal={reveal ? 'image' : undefined}
+      data-tilt={tilt ? '' : undefined}
     >
       {parallax ? (
         <div className="img__parallax" data-parallax={parallax}>
