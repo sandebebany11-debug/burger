@@ -10,6 +10,9 @@ const SLIDES: ImageId[] = ['simyan-foehnen', 'balayage-blond', 'herren-taper', '
 export function Hero({ start }: { start: boolean }) {
   const root = useRef<HTMLElement>(null)
   const [slide, setSlide] = useState(0)
+  // Folgebilder erst laden, kurz bevor sie gebraucht werden (spart mobile Daten)
+  const [reached, setReached] = useState(0)
+  useEffect(() => setReached((r) => Math.max(r, slide + 1)), [slide])
 
   // Ausgangszustand vor dem ersten Paint setzen
   useLayoutEffect(() => {
@@ -100,7 +103,7 @@ export function Hero({ start }: { start: boolean }) {
             <div className="hero__media-inner">
               {SLIDES.map((id, i) => (
                 <div key={id} className={`hero__slide ${i === slide ? 'is-active' : ''}`} aria-hidden={i !== slide}>
-                  <Img id={id} priority={i === 0} sizes="(min-width: 900px) 42vw, 100vw" />
+                  {i <= reached && <Img id={id} priority={i === 0} sizes="(min-width: 900px) 42vw, 100vw" />}
                 </div>
               ))}
             </div>

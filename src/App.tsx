@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Cursor } from './components/Cursor'
 import { Footer } from './components/Footer'
 import { Intro } from './components/Intro'
+import { Marquee } from './components/Marquee'
 import { MobileCta } from './components/MobileCta'
 import { Nav } from './components/Nav'
 import { initSmoothScroll, ScrollTrigger } from './lib/motion'
@@ -51,6 +52,7 @@ export function App() {
       <main id="main" ref={main}>
         <Hero start={heroStart} />
         <Salon />
+        <Marquee items={['Schnitt', 'Coloration', 'Balayage', 'Strähnen', 'Styling', 'Brautfrisuren', 'Bart', 'Kevin.Murphy']} />
         <Services />
         <Color />
         <Gallery />
@@ -58,6 +60,7 @@ export function App() {
         <Team />
         <Prices />
         <Booking />
+        <Marquee items={['Leverkusen', 'Lützenkirchen', 'Di – Fr 9 – 18', 'Sa 9 – 14', 'Art of Hair']} direction={-1} />
         <Visit />
       </main>
       <Footer />

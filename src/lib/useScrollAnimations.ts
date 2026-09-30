@@ -22,7 +22,7 @@ export function useScrollAnimations(root: RefObject<HTMLElement | null>, deps: u
         const words = splitWords(node)
         gsap.from(words, {
           yPercent: 115,
-          rotate: 2,
+          rotation: 2,
           duration: 1.3,
           stagger: 0.035,
           ease: 'expo.out',
