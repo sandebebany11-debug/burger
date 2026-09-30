@@ -1,28 +1,31 @@
-// Generates favicon, touch icon, the sheen mask and the Open Graph image from
-// the lily geometry in src/brand/lily.ts.   npm run brand
-import { writeFile } from "node:fs/promises";
+// Favicon, touch icons and manifest from the logo (public/brand/lilie.png,
+// produced by scripts/logo.mjs).   npm run brand
+import { copyFile, writeFile } from "node:fs/promises";
 import sharp from "sharp";
-import { lilySvg } from "../src/brand/lily.ts";
 
-const GOLD = "#b8914f";
 const INK = "#14110e";
+const LOGO = "public/brand/lilie.png";
 
+// mask for the gold glint (bundled with the CSS)
+await copyFile("public/brand/lilie-small.png", "src/brand/lilie-mask.png");
 
-// mask for the gold sheen (solid shape)
-await writeFile("src/brand/lily-mask.svg", lilySvg("#000"));
-
-// favicon: gold lily on an ink tile, readable at 16px
-const lilyInner = lilySvg(GOLD).replace(/^<svg[^>]*>|<\/svg>$/g, "");
-const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${INK}"/><svg x="12" y="7" width="40" height="50" viewBox="0 0 200 250">${lilyInner}</svg></svg>`;
-await writeFile("public/favicon.svg", favicon);
-await sharp(Buffer.from(favicon)).resize(32, 32).png().toFile("public/favicon-32.png");
-
-const touch = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" fill="${INK}"/><svg x="45" y="28" width="90" height="113" viewBox="0 0 200 250">${lilyInner}</svg></svg>`;
-await sharp(Buffer.from(touch)).png().toFile("public/apple-touch-icon.png");
-for (const s of [192, 512]) {
-  const icon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" fill="${INK}"/><svg x="50" y="34" width="80" height="100" viewBox="0 0 200 250">${lilyInner}</svg></svg>`;
-  await sharp(Buffer.from(icon)).resize(s, s).png().toFile(`public/icon-${s}.png`);
+/** logo centred on an ink tile */
+async function tile(size, logoHeight, radius = 0) {
+  const logo = await sharp(LOGO).resize({ height: logoHeight }).toBuffer();
+  const { width } = await sharp(logo).metadata();
+  const bg = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${radius}" fill="${INK}"/></svg>`,
+  );
+  return sharp(bg)
+    .composite([{ input: logo, left: Math.round((size - width) / 2), top: Math.round((size - logoHeight) / 2) }])
+    .png();
 }
+
+await (await tile(64, 50, 14)).toFile("public/favicon-64.png");
+await (await tile(32, 26, 7)).toFile("public/favicon-32.png");
+await (await tile(180, 124)).toFile("public/apple-touch-icon.png");
+await (await tile(192, 132)).toFile("public/icon-192.png");
+await (await tile(512, 352)).toFile("public/icon-512.png");
 
 await writeFile(
   "public/site.webmanifest",
@@ -43,5 +46,4 @@ await writeFile(
     2,
   ),
 );
-
-console.log("brand assets written (og-image is rendered by scripts/og-image.mjs)");
+console.log("brand assets written");

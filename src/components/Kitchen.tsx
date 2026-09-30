@@ -170,7 +170,7 @@ export default function Kitchen() {
         </p>
         <div className="kitchen__track">
           <header className="kitchen__intro">
-            <p className="label eyebrow label--gold">02 — La Cucina</p>
+            <p className="label eyebrow label--gold">La Cucina</p>
             <h2 id="kitchen-title" className="h2">
               <Lines lines={["Was aus", <em key="k">unserer Küche</em>, "kommt."]} />
             </h2>
@@ -182,7 +182,7 @@ export default function Kitchen() {
             </Button>
           </header>
 
-          {PLATES.map((p, i) => (
+          {PLATES.map((p) => (
             <figure key={p.image} className={`plate plate--${p.shape}`} data-cursor="View">
               <Picture
                 name={p.image}
@@ -191,7 +191,6 @@ export default function Kitchen() {
                 sizes={p.shape === "wide" ? "(min-width: 900px) 52vw, 92vw" : "(min-width: 900px) 30vw, 92vw"}
               />
               <figcaption className="plate__caption">
-                <span className="plate__index label">{String(i + 1).padStart(2, "0")}</span>
                 <span className="plate__title serif">
                   <em>{p.italian}</em>
                 </span>

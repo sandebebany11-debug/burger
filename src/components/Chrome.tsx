@@ -55,7 +55,7 @@ export function StickyCta() {
 
   useEffect(() => {
     const hero = document.getElementById("top");
-    const blockers = ["reservieren", "besuch"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const blockers = ["reservieren"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     const footer = document.querySelector("footer");
     const state = { pastHero: false, blocked: new Set<Element>() };
     const update = () => setShow(state.pastHero && state.blocked.size === 0);

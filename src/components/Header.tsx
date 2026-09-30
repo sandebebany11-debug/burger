@@ -112,7 +112,7 @@ export default function Header() {
     <header className={cls}>
       <div className="header__bar">
         <a className="brand" href="#top" onClick={go("#top")} aria-label="Casa Ducale — zum Seitenanfang">
-          <Emblem className="brand__lily" title="" />
+          <Emblem className="brand__lily" title="" sizes="30px" priority />
           <span className="brand__text">
             <span className="brand__name">Casa Ducale</span>
             <span className="brand__sub">Cucina Italiana</span>
@@ -164,11 +164,10 @@ export default function Header() {
       <div id="mobile-menu" ref={menuRef} className="menu theme-dark" aria-hidden={!open} inert={!open}>
         <nav aria-label="Mobile Navigation">
           <ul className="menu__list">
-            {nav.concat({ href: "#reservieren", label: "Reservieren" }).map((n, i) => (
+            {nav.concat({ href: "#reservieren", label: "Reservieren" }).map((n) => (
               <li key={n.href}>
                 <a className="menu__link" href={n.href} onClick={go(n.href)}>
                   <span>
-                    <small>{String(i + 1).padStart(2, "0")}</small>
                     {n.label}
                   </span>
                 </a>
@@ -191,7 +190,7 @@ export default function Header() {
             Tisch reservieren
           </Button>
         </div>
-        <Emblem className="menu__lily" title="" />
+        <Emblem className="menu__lily" title="" sizes="60vw" />
       </div>
     </header>
   );

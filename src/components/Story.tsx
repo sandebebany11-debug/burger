@@ -88,7 +88,7 @@ export default function Story() {
   return (
     <section id="restaurant" ref={root} className="story" aria-labelledby="story-title">
       <div className="container">
-        <p className="label eyebrow story__eyebrow">01 — Il Ristorante</p>
+        <p className="label eyebrow story__eyebrow">Il Ristorante</p>
         <p className="story__manifesto display">
           <Words text="Ein Ort für gutes Essen." />
           <br />

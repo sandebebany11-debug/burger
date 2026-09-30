@@ -11,7 +11,8 @@
     "images": "node scripts/optimize-images.mjs",
     "brand": "node scripts/brand.mjs",
     "og": "node scripts/og-image.mjs",
-    "test": "node --test tests/*.test.ts"
+    "test": "node --test tests/*.test.ts",
+    "logo": "node scripts/logo.mjs"
   },
   "dependencies": {
     "@fontsource-variable/cormorant-garamond": "^5.3.0",

@@ -74,13 +74,13 @@ export default function Menu() {
       <div className="container menu-sec__grid">
         <div className="menu-sec__side">
           <header className="menu-sec__head">
-            <p className="label eyebrow menu-sec__eyebrow">03 — La Carta</p>
+            <p className="label eyebrow menu-sec__eyebrow">La Carta</p>
             <h2 id="menu-title" className="h2 menu-sec__title">
               <Lines lines={["Die", <em key="s">Speisekarte.</em>]} />
             </h2>
           </header>
           <div className="menu-sec__tabs" role="tablist" aria-label="Kategorien" ref={tabsRef} onKeyDown={onKey}>
-            {menu.map((c, i) => (
+            {menu.map((c) => (
               <button
                 key={c.id}
                 data-id={c.id}
@@ -92,7 +92,6 @@ export default function Menu() {
                 className={`menu-tab ${c.id === active ? "is-active" : ""}`}
                 onClick={() => select(c.id)}
               >
-                <span className="menu-tab__n">{String(i + 1).padStart(2, "0")}</span>
                 <span className="menu-tab__label">{c.label}</span>
                 <span className="menu-tab__it serif">{c.italian}</span>
               </button>
@@ -123,7 +122,7 @@ export default function Menu() {
                     {d.name}
                     {d.house && (
                       <span className="dish__badge label">
-                        <Emblem className="dish__lily" title="" />
+                        <Emblem className="dish__lily" title="" sizes="12px" />
                         Della Casa
                       </span>
                     )}

@@ -55,14 +55,7 @@
 }
 .plate__caption {
   display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 18px;
   row-gap: 4px;
-  align-items: baseline;
-}
-.plate__index {
-  grid-row: span 3;
-  color: var(--gold);
 }
 .plate__title {
   font-size: clamp(2.2rem, 3.4vw, 3.2rem);

@@ -48,7 +48,7 @@ export default function Events() {
     <section id="feiern" ref={root} className="events" aria-labelledby="events-title">
       <div className="container events__grid">
         <div className="events__head">
-          <p className="label eyebrow events__eyebrow">05 — Feste &amp; Catering</p>
+          <p className="label eyebrow events__eyebrow">Feste &amp; Catering</p>
           <h2 id="events-title" className="h2 events__title">
             <Lines lines={["Feiern bei", <em key="c">Casa Ducale.</em>]} />
           </h2>

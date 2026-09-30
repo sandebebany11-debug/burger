@@ -1,10 +1,10 @@
 .story {
   position: relative;
   padding-block: var(--section);
-  background: var(--ivory);
+  background: var(--ink);
 }
 .story__eyebrow {
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 .story__manifesto {
   margin-top: clamp(28px, 4vw, 48px);
@@ -13,7 +13,7 @@
   letter-spacing: -0.025em;
 }
 .story__manifesto em {
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 
 .story__grid {
@@ -25,7 +25,7 @@
   margin-bottom: 36px;
 }
 .story__head em {
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 .story__copy {
   display: grid;
@@ -52,7 +52,7 @@
   width: 46%;
   aspect-ratio: 3 / 4;
   box-shadow: 0 40px 80px -30px rgba(20, 17, 14, 0.45);
-  outline: 10px solid var(--ivory);
+  outline: 10px solid var(--ink);
 }
 
 .story__facts {
@@ -70,15 +70,15 @@
   position: absolute;
   inset: 0 0 auto;
   height: 1px;
-  background: var(--line-light);
+  background: var(--line-dark);
 }
 .fact__value {
   font-size: clamp(3.6rem, 7vw, 6.4rem);
   line-height: 1;
-  color: var(--on-light);
+  color: var(--on-dark);
 }
 .fact__label {
-  color: var(--gold-deep);
+  color: var(--gold);
 }
 
 @media (min-width: 900px) {

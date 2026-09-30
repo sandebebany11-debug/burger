@@ -52,7 +52,7 @@ export default function Atmosphere() {
           <div className="atmo__veil" />
         </div>
         <div className="atmo__copy container">
-          <p className="label label--gold atmo__reveal">04 — L’Atmosfera</p>
+          <p className="label label--gold atmo__reveal">L’Atmosfera</p>
           <h2 id="atmo-title" className="h2">
             <Lines lines={["Ein Stück Piazza,", <em key="m">mitten in Leverkusen.</em>]} />
           </h2>

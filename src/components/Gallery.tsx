@@ -75,7 +75,7 @@ export default function Gallery() {
     <section id="galerie" ref={root} className="gallery theme-dark" aria-labelledby="gallery-title">
       <div className="container">
         <header className="gallery__head">
-          <p className="label eyebrow label--gold">06 — Momenti</p>
+          <p className="label eyebrow label--gold">Momenti</p>
           <h2 id="gallery-title" className="h2 gallery__title">
             <Lines lines={["Momente", <em key="c">aus der Casa.</em>]} />
           </h2>

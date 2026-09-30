@@ -10,17 +10,15 @@ export default function Marchio() {
 
   useGsap(root, ({ reduced, q }) => {
     if (reduced) return;
-    const paths = q(".marchio__lily .lily-path") as unknown as SVGPathElement[];
-    paths.forEach((p) => {
-      const len = p.getTotalLength?.() ?? 400;
-      gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, fillOpacity: 0 });
-    });
     const tl = gsap.timeline({
       scrollTrigger: { trigger: q(".marchio__stage")[0], start: "top 70%", once: true },
     });
-    tl.to(paths, { strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut", stagger: 0.04 })
-      .to(paths, { fillOpacity: 1, duration: 0.9, ease: "power1.out" }, "-=0.5")
-      .from(q(".marchio__halo"), { opacity: 0, scale: 0.6, duration: 1.8, ease: "expo.out" }, "-=1.2")
+    tl.fromTo(
+      q(".marchio__lily")[0],
+      { clipPath: "inset(100% 0% 0% 0%)", scale: 0.9, y: 40 },
+      { clipPath: "inset(0% 0% 0% 0%)", scale: 1, y: 0, duration: 1.6, ease: "expo.out", clearProps: "clipPath" },
+    )
+      .from(q(".marchio__halo"), { opacity: 0, scale: 0.6, duration: 1.8, ease: "expo.out" }, "-=1.4")
       .add(() => root.current?.classList.add("is-shining"), "-=0.4")
       .from(q(".marchio__name .line-mask > span"), { yPercent: 110, duration: 1.3, ease: "expo.out", stagger: 0.1 }, "-=1.2")
       .from(q(".marchio__rule"), { scaleX: 0, duration: 1.2, ease: "expo.inOut" }, "-=1")
@@ -69,12 +67,12 @@ export default function Marchio() {
   });
 
   return (
-    <section className="marchio theme-dark grain" ref={root} aria-labelledby="marchio-title">
+    <section className="marchio theme-dark" ref={root} aria-labelledby="marchio-title">
       <div className="marchio__inner container">
         <div className="marchio__stage">
           <div className="marchio__lily-wrap">
             <div className="marchio__halo" aria-hidden="true" />
-            <Emblem className="marchio__lily" animated title="Die goldene Lilie von Casa Ducale" />
+            <Emblem className="marchio__lily" title="Die goldene Lilie von Casa Ducale" sizes="(min-width: 900px) 260px, 150px" />
             <span className="marchio__shine" aria-hidden="true" />
           </div>
           <h2 id="marchio-title" className="marchio__name">

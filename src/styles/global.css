@@ -83,8 +83,8 @@ html.lenis body {
 
 body {
   margin: 0;
-  background: var(--ivory);
-  color: var(--on-light);
+  background: var(--ink);
+  color: var(--on-dark);
   font-family: var(--sans);
   font-size: var(--fs-body);
   line-height: 1.65;
@@ -257,7 +257,7 @@ ol {
 }
 
 .muted {
-  color: var(--on-light-dim);
+  color: var(--on-dark-dim);
 }
 .theme-dark .muted {
   color: var(--on-dark-dim);
@@ -277,8 +277,8 @@ ol {
 
 /* ------------------------------------------------------------------ button */
 .btn {
-  --btn-bg: var(--ink);
-  --btn-fg: var(--ivory);
+  --btn-bg: var(--on-dark);
+  --btn-fg: var(--ink);
   --btn-fill: var(--gold);
   position: relative;
   display: inline-flex;

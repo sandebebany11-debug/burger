@@ -13,12 +13,24 @@
   justify-items: center;
   gap: 18px;
 }
+.intro__lily-wrap {
+  position: relative;
+  display: block;
+  width: clamp(78px, 10vw, 112px);
+  overflow: hidden;
+}
 .intro__lily {
-  width: clamp(64px, 9vw, 96px);
+  width: 100%;
   height: auto;
 }
-.intro__lily .lily {
-  stroke-width: 1.4;
+.intro__glint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 246, 220, 0.75) 50%, transparent 65%);
+  -webkit-mask: url("../brand/lilie-mask.png") center / contain no-repeat;
+  mask: url("../brand/lilie-mask.png") center / contain no-repeat;
+  mix-blend-mode: soft-light;
+  transform: translateX(-140%);
 }
 .intro__word {
   font-family: var(--serif);

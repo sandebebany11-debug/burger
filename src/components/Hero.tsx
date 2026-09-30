@@ -54,16 +54,17 @@ export default function Hero() {
     // ---------------------------------------------------------- entrance
     stopScroll(true);
     const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-    const paths = q(".intro .lily-path") as unknown as SVGPathElement[];
+    const lily = q(".intro__lily")[0];
 
     if (!seen) {
-      paths.forEach((p) => {
-        const len = p.getTotalLength?.() ?? 400;
-        gsap.set(p, { strokeDasharray: len, strokeDashoffset: len, fillOpacity: 0 });
-      });
-      tl.to(paths, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut", stagger: 0.02 })
-        .to(paths, { fillOpacity: 1, duration: 0.35, ease: "power1.out" }, "-=0.3")
-        .from(q(".intro__word .line-mask > span"), { yPercent: 110, duration: 0.7 }, "-=0.45")
+      // the lily rises out of a mask, then a gold glint passes over it
+      tl.fromTo(
+        lily,
+        { clipPath: "inset(100% 0% 0% 0%)", scale: 0.86, y: 24 },
+        { clipPath: "inset(0% 0% 0% 0%)", scale: 1, y: 0, duration: 1, ease: "expo.out" },
+      )
+        .fromTo(q(".intro__glint"), { xPercent: -140 }, { xPercent: 140, duration: 0.9, ease: "power2.inOut" }, "-=0.55")
+        .from(q(".intro__word .line-mask > span"), { yPercent: 110, duration: 0.7 }, "-=0.6")
         .from(q(".intro__sub"), { opacity: 0, y: 10, duration: 0.5 }, "<0.2");
     } else {
       tl.from(q(".intro__mark"), { opacity: 0, scale: 0.94, duration: 0.45 });
@@ -161,7 +162,10 @@ export default function Hero() {
     <section id="top" ref={root} className="hero theme-dark" aria-labelledby="hero-title">
       <div className="intro" aria-hidden="true">
         <div className="intro__mark">
-          <Emblem className="intro__lily" animated title="" />
+          <span className="intro__lily-wrap">
+            <Emblem className="intro__lily" title="" sizes="120px" priority />
+            <span className="intro__glint" aria-hidden="true" />
+          </span>
           <p className="intro__word">
             <Lines lines={["Casa Ducale"]} />
           </p>

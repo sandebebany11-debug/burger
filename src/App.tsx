@@ -11,7 +11,6 @@ import Marchio from "./components/Marchio";
 import Menu from "./components/Menu";
 import Reservation from "./components/Reservation";
 import Story from "./components/Story";
-import Visit from "./components/Visit";
 import { initSmoothScroll, ScrollTrigger, scrollToHash } from "./lib/motion";
 
 export default function App() {
@@ -39,7 +38,6 @@ export default function App() {
         <Events />
         <Gallery />
         <Reservation />
-        <Visit />
       </main>
       <Footer />
       <StickyCta />
