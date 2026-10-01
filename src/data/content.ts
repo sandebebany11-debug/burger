@@ -20,7 +20,9 @@ export const business = {
   venue: "in den Luminaden",
   phoneDisplay: "0214 43444",
   phoneHref: "tel:+4921443444",
-  email: null as string | null, // ⚠︎ BESTÄTIGEN — keine öffentliche E-Mail gefunden
+  email: null as string | null, // ⚠︎ E-Mail-Adresse vom Inhaber eintragen, z. B. "info@casa-ducale-leverkusen.de"
+  /** WhatsApp number in international format without "+" or spaces, e.g. "4917012345678" */
+  whatsapp: null as string | null, // ⚠︎ WhatsApp-Nummer vom Inhaber eintragen
   instagram: null as { handle: string; url: string } | null, // ⚠︎ offizieller Account? Dann hier eintragen
   mapsUrl: "https://maps.app.goo.gl/WxpsURLGyBKVngBw6",
   siteUrl: "https://casa-ducale-leverkusen.de", // ⚠︎ BESTÄTIGEN — finale Domain

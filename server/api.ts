@@ -7,6 +7,7 @@ import {
   STATUS_LABEL,
   addDays,
   berlinNow,
+  checkRequestedTime,
   dayStateFromSlots,
   isIsoDate,
   sanitizeInput,
@@ -199,11 +200,15 @@ async function createReservation(req: Request): Promise<Response> {
   if (Object.keys(errors).length) return fail(422, "invalid", "Bitte prüfen Sie Ihre Angaben.", { fields: errors });
 
   const existing = await reservationsWithPrefix(input.date);
-  const slot = slotsForDate(input.date, settings, await getBlocks(), existing).find((s) => s.time === input.time);
-  if (!slot || slot.state === "blocked")
-    return fail(409, "slot_unavailable", "Diese Uhrzeit ist leider nicht mehr verfügbar. Bitte wählen Sie eine andere.");
-  if (slot.remaining < input.guests)
-    return fail(409, "slot_full", "Für diese Uhrzeit sind nicht mehr genügend Plätze frei. Bitte wählen Sie eine andere Uhrzeit.");
+  const problem = checkRequestedTime(input.date, input.time, input.guests, settings, await getBlocks(), existing);
+  if (problem === "closed")
+    return fail(409, "slot_unavailable", "An diesem Tag ist leider keine Online-Reservierung möglich. Bitte rufen Sie uns an.");
+  if (problem === "outside_hours")
+    return fail(409, "slot_unavailable", `Bitte wählen Sie eine Uhrzeit zwischen ${settings.openFrom} und ${settings.openUntil} Uhr.`);
+  if (problem === "too_soon")
+    return fail(409, "slot_unavailable", "Für so kurzfristige Reservierungen rufen Sie uns bitte direkt an.");
+  if (problem === "slot_full")
+    return fail(409, "slot_full", "Zu dieser Uhrzeit ist leider kein Tisch mehr frei. Bitte wählen Sie eine andere Uhrzeit.");
 
   const duplicate = existing.some(
     (r) => ACTIVE_STATUSES.includes(r.status) && r.email === input.email && r.time === input.time,
@@ -354,6 +359,9 @@ function checkSettings(s: Settings | null): string | null {
   if (!int(s.bookingHorizonDays, 1, 365)) return "Buchungszeitraum: 1–365 Tage.";
   if (!int(s.leadTimeMinutes, 0, 2880)) return "Vorlaufzeit: 0–2880 Minuten.";
   if (!int(s.retentionDays, 1, 365)) return "Aufbewahrung: 1–365 Tage.";
+  const hhmm = /^([01]\d|2[0-3]):[0-5]\d$/;
+  if (!hhmm.test(s.openFrom ?? "") || !hhmm.test(s.openUntil ?? "") || s.openFrom >= s.openUntil)
+    return "Reservierungszeiten: „von“ muss vor „bis“ liegen.";
   for (let d = 0; d < 7; d++) {
     const day = s.weekdays?.[String(d)];
     if (!day || typeof day.open !== "boolean" || !Array.isArray(day.slots)) return "Wochentage unvollständig.";

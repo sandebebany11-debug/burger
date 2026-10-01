@@ -24,6 +24,18 @@
   white-space: nowrap;
 }
 
+.resv__hours {
+  margin: 14px 0 32px;
+  font-size: 0.9rem;
+  color: var(--gold-light);
+}
+.resv-demo {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(184, 145, 79, 0.14);
+  color: var(--gold-light);
+  font-size: 0.85rem;
+}
 .resv__card {
   outline: none;
 }

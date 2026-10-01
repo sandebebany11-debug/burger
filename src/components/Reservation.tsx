@@ -1,37 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  DEFAULT_SETTINGS,
-  addDays,
-  berlinNow,
-  slotsForDate,
-  validateReservation,
-  type FieldErrors,
-  type SlotState,
-} from "../../shared/reservations";
+import { DEFAULT_SETTINGS, addDays, berlinNow, validateReservation, type FieldErrors } from "../../shared/reservations";
 import { business } from "../data/content";
-import { api, ApiError, formatDateLong } from "../lib/api";
+import { api, ApiError, formatDateLong, IS_DEMO } from "../lib/api";
 import { gsap, prefersReducedMotion } from "../lib/motion";
 import { site } from "../lib/paths";
+import ContactOptions from "./ContactOptions";
 import { OCCASION_EVENT } from "./Events";
 import { Button, Lines, revealOnScroll, useGsap } from "./ui";
 import "./Reservation.css";
 
-type Slot = { time: string; state: SlotState };
 const EMPTY = { name: "", phone: "", date: "", time: "", guests: "", email: "", message: "", website: "" };
-
-/** Times from the default schedule — used when availability can't be loaded. */
-function fallbackSlots(date: string): Slot[] {
-  return slotsForDate(date, DEFAULT_SETTINGS, {}, []).map(({ time, state }) => ({ time, state }));
-}
 
 export default function Reservation() {
   const root = useRef<HTMLElement>(null);
   const card = useRef<HTMLDivElement>(null);
   const [f, setF] = useState(EMPTY);
   const [consent, setConsent] = useState(false);
-  const [slots, setSlots] = useState<Slot[] | null>(null);
-  const [slotsLoading, setSlotsLoading] = useState(false);
-  const [maxParty, setMaxParty] = useState(DEFAULT_SETTINGS.maxPartySize);
+  const maxParty = DEFAULT_SETTINGS.maxPartySize;
+  const { openFrom, openUntil } = DEFAULT_SETTINGS;
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState("");
   const [phase, setPhase] = useState<"form" | "sending" | "sent">("form");
@@ -58,27 +44,11 @@ export default function Reservation() {
     return () => window.removeEventListener(OCCASION_EVENT, on);
   }, []);
 
-  const loadTimes = async (date: string) => {
-    setSlots(null);
-    if (!date) return;
-    setSlotsLoading(true);
-    try {
-      const res = await api.day(date);
-      setSlots(res.slots);
-      setMaxParty(res.maxPartySize);
-    } catch {
-      setSlots(fallbackSlots(date));
-    } finally {
-      setSlotsLoading(false);
-    }
-  };
-
   const change = (k: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const value = e.target.value;
-    setF((x) => ({ ...x, [k]: value, ...(k === "date" ? { time: "" } : {}) }));
+    setF((x) => ({ ...x, [k]: value }));
     setErrors((x) => ({ ...x, [k]: undefined }));
     setFormError("");
-    if (k === "date") void loadTimes(value);
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -103,10 +73,6 @@ export default function Reservation() {
       if (err instanceof ApiError) {
         if (err.fields) setErrors(err.fields);
         setFormError(err.message);
-        if (err.code === "slot_full" || err.code === "slot_unavailable") {
-          setF((x) => ({ ...x, time: "" }));
-          void loadTimes(f.date);
-        }
       } else setFormError("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
     }
   };
@@ -121,18 +87,8 @@ export default function Reservation() {
   const reset = () => {
     setF(EMPTY);
     setConsent(false);
-    setSlots(null);
     setPhase("form");
   };
-
-  const bookable = slots?.filter((s) => s.state === "available" || s.state === "limited") ?? [];
-  const timeHint = !f.date
-    ? "Bitte zuerst ein Datum wählen"
-    : slotsLoading
-      ? "Zeiten werden geladen …"
-      : bookable.length === 0
-        ? "An diesem Tag ist keine Online-Reservierung möglich"
-        : "Uhrzeit wählen";
 
   const err = (k: keyof FieldErrors) =>
     errors[k] ? (
@@ -154,6 +110,10 @@ export default function Reservation() {
             Füllen Sie das Formular aus – wir bestätigen Ihre Reservierung telefonisch oder per E-Mail. Für Gruppen über{" "}
             {maxParty} Personen rufen Sie uns bitte an: <strong>{business.phoneDisplay}</strong>
           </p>
+          <p className="resv__hours">
+            Reservierungen zwischen {openFrom} und {openUntil} Uhr
+          </p>
+          <ContactOptions />
         </div>
 
         <div className="resv__card" ref={card} tabIndex={-1} aria-live="polite">
@@ -169,6 +129,7 @@ export default function Reservation() {
               <p className="muted">
                 Wir melden uns zur Bestätigung. Bis dahin ist die Reservierung noch nicht verbindlich.
               </p>
+              {IS_DEMO && <p className="resv-demo">Demo-Version: Diese Anfrage wurde nicht wirklich gesendet.</p>}
               <Button onClick={reset} variant="ghost" className="on-dark" small>
                 Weitere Anfrage
               </Button>
@@ -196,17 +157,17 @@ export default function Reservation() {
 
                 <div className={`field ${errors.time ? "has-error" : ""}`}>
                   <label htmlFor="r-time">Uhrzeit</label>
-                  <select id="r-time" name="time" value={f.time} onChange={change("time")} disabled={!f.date || slotsLoading || bookable.length === 0} {...aria("time")}>
-                    <option value="">{timeHint}</option>
-                    {slots?.map((s) => {
-                      const ok = s.state === "available" || s.state === "limited";
-                      return (
-                        <option key={s.time} value={s.time} disabled={!ok}>
-                          {s.time} Uhr{s.state === "full" ? " – ausgebucht" : s.state === "blocked" ? " – nicht verfügbar" : ""}
-                        </option>
-                      );
-                    })}
-                  </select>
+                  <input
+                    id="r-time"
+                    name="time"
+                    type="time"
+                    min={openFrom}
+                    max={openUntil}
+                    step={900}
+                    value={f.time}
+                    onChange={change("time")}
+                    {...aria("time")}
+                  />
                   {err("time")}
                 </div>
               </div>

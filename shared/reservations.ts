@@ -51,6 +51,9 @@ export type Settings = {
   leadTimeMinutes: number;
   /** reservations are deleted this many days after the reserved date */
   retentionDays: number;
+  /** guests may request any time in this window; the owner confirms */
+  openFrom: string;
+  openUntil: string;
 };
 
 export type Blocks = {
@@ -82,6 +85,8 @@ export const DEFAULT_SETTINGS: Settings = {
   bookingHorizonDays: 90,
   leadTimeMinutes: 120,
   retentionDays: 30,
+  openFrom: "08:30",
+  openUntil: "21:30",
 };
 
 export function toMinutes(t: string): number {
@@ -229,4 +234,33 @@ export function sanitizeInput(input: ReservationInput): ReservationInput {
     occasion: clean(input.occasion, 40),
     consent: Boolean(input.consent),
   };
+}
+
+/**
+ * Checks a freely chosen time. Returns an error code or null.
+ * Configured slots keep their capacity/blocking rules; other times inside
+ * the opening window are accepted and confirmed by the owner.
+ */
+export function checkRequestedTime(
+  date: string,
+  time: string,
+  guests: number,
+  settings: Settings,
+  blocks: Blocks,
+  reservations: Reservation[],
+  now = berlinNow(),
+): "closed" | "too_soon" | "outside_hours" | "slot_full" | null {
+  const day = settings.weekdays[String(weekdayOf(date))];
+  const offset = daysBetween(now.date, date);
+  const blocked = blocks[date] ?? [];
+  if (!day?.open || offset < 0 || offset > settings.bookingHorizonDays || blocked.includes("*")) return "closed";
+  const m = toMinutes(time);
+  if (Number.isNaN(m) || m < toMinutes(settings.openFrom) || m > toMinutes(settings.openUntil)) return "outside_hours";
+  if (offset === 0 && m - now.minutes < settings.leadTimeMinutes) return "too_soon";
+  if (blocked.includes(time)) return "slot_full";
+  if (day.slots.includes(time)) {
+    const taken = bookedBySlot(reservations).get(time) ?? 0;
+    if (taken + guests > settings.capacityPerSlot) return "slot_full";
+  }
+  return null;
 }

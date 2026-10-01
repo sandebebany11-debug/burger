@@ -1,0 +1,76 @@
+.contact-options {
+  display: grid;
+  gap: 14px;
+}
+.contact-options__title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.contact-options__list {
+  display: grid;
+  gap: 10px;
+}
+.contact-options__btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 10px 18px 10px 12px;
+  border-radius: 16px;
+  background: var(--ink-2);
+  box-shadow: inset 0 0 0 1px var(--line-dark);
+  transition: background-color 0.35s, transform 0.35s var(--ease-out), box-shadow 0.35s;
+}
+a.contact-options__btn:hover {
+  background: var(--ink-3);
+  box-shadow: inset 0 0 0 1px var(--gold);
+  transform: translateY(-2px);
+}
+.contact-options__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--ink);
+}
+.contact-options__icon svg {
+  width: 24px;
+  height: 24px;
+}
+.is-whatsapp .contact-options__icon {
+  background: #25d366;
+}
+.is-mail .contact-options__icon {
+  background: var(--gold-light);
+}
+.is-call .contact-options__icon {
+  background: var(--gold);
+}
+.contact-options__text {
+  display: grid;
+  line-height: 1.3;
+  min-width: 0;
+}
+.contact-options__text strong {
+  font-weight: 700;
+  color: var(--on-dark);
+}
+.contact-options__text span {
+  font-size: 0.88rem;
+  color: var(--on-dark-dim);
+  overflow-wrap: anywhere;
+}
+.contact-options__btn.is-pending {
+  opacity: 0.55;
+}
+
+@media (min-width: 640px) {
+  .contact-options__list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

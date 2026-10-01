@@ -443,6 +443,14 @@ function SettingsForm({ api, notify }: { api: Api; notify: (s: string) => void }
           <input type="number" min={0} max={2880} value={s.leadTimeMinutes} onChange={num("leadTimeMinutes")} />
         </label>
         <label>
+          Reservierbar ab (Uhrzeit)
+          <input type="time" value={s.openFrom} onChange={(e) => setS({ ...s, openFrom: e.target.value })} />
+        </label>
+        <label>
+          Reservierbar bis (Uhrzeit)
+          <input type="time" value={s.openUntil} onChange={(e) => setS({ ...s, openUntil: e.target.value })} />
+        </label>
+        <label>
           Löschen nach (Tagen)
           <input type="number" min={1} max={365} value={s.retentionDays} onChange={num("retentionDays")} />
         </label>

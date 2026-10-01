@@ -42,11 +42,16 @@ async function request<T>(url: string, init?: RequestInit, timeoutMs = 12000): P
   return body as T;
 }
 
+/** Preview builds (VITE_DEMO=1) have no server: requests are simulated. */
+export const IS_DEMO = import.meta.env.VITE_DEMO === "1";
+
 export const api = {
   month: (month: string) => request<MonthResponse>(site(`api/availability?month=${month}`)),
   day: (date: string) => request<DayResponse>(site(`api/availability?date=${date}`)),
   reserve: (input: ReservationInput) =>
-    request<{ id: string; status: string }>(site("api/reservations"), { method: "POST", body: JSON.stringify(input) }),
+    IS_DEMO
+      ? new Promise<{ id: string; status: string }>((r) => setTimeout(() => r({ id: "demo", status: "pending" }), 900))
+      : request<{ id: string; status: string }>(site("api/reservations"), { method: "POST", body: JSON.stringify(input) }),
 };
 
 // ------------------------------------------------------------------ dates

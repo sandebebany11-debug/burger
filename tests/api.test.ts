@@ -133,6 +133,14 @@ describe("reservations", () => {
     assert.equal(r.body.error, "slot_unavailable");
   });
 
+  test("accepts free times inside the opening window", async () => {
+    const r = await call("POST", "/api/reservations", guest({ time: "18:45", email: "free@example.com" }));
+    assert.equal(r.status, 201);
+    const late = await call("POST", "/api/reservations", guest({ time: "23:15", email: "late2@example.com" }));
+    assert.equal(late.status, 409);
+    assert.match(late.body.message, /zwischen/);
+  });
+
   test("honeypot submissions are silently dropped", async () => {
     const before = (await store().list("r/")).length;
     const r = await call("POST", "/api/reservations", { ...guest({ email: "bot@example.com" }), website: "http://spam" });
