@@ -1,6 +1,6 @@
 # Baut die Demo-Version (ohne Server, mit Demo-Login) und veröffentlicht sie
-# auf dem Branch gh-pages. In GitHub einmalig aktivieren:
-# Settings → Pages → Source: "Deploy from a branch" → Branch: gh-pages / (root)
+# im Unterordner /art-of-hair/ des Branches gh-pages. Andere Demos auf
+# gh-pages (z. B. im Hauptverzeichnis) bleiben unangetastet.
 name: Demo auf GitHub Pages
 
 on:
@@ -32,4 +32,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist-preview
           publish_branch: gh-pages
-          force_orphan: true
+          destination_dir: art-of-hair
+          keep_files: true
