@@ -4,7 +4,6 @@ import { business } from "../data/content";
 import { api, ApiError, formatDateLong, IS_DEMO } from "../lib/api";
 import { gsap, prefersReducedMotion } from "../lib/motion";
 import { site } from "../lib/paths";
-import ContactOptions from "./ContactOptions";
 import { OCCASION_EVENT } from "./Events";
 import { Button, Lines, revealOnScroll, useGsap } from "./ui";
 import "./Reservation.css";
@@ -113,7 +112,6 @@ export default function Reservation() {
           <p className="resv__hours">
             Reservierungen zwischen {openFrom} und {openUntil} Uhr
           </p>
-          <ContactOptions />
         </div>
 
         <div className="resv__card" ref={card} tabIndex={-1} aria-live="polite">
