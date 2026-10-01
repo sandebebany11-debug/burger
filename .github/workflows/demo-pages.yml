@@ -26,6 +26,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:preview
+      # Erzwingt einen neuen Commit, damit GitHub Pages die Seite neu baut
+      - run: date -u +%Y-%m-%dT%H:%M:%SZ > dist-preview/build.txt
       - name: Veröffentlichen
         uses: peaceiris/actions-gh-pages@v4
         with:
