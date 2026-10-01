@@ -14,6 +14,7 @@ import {
 import { Calendar, longDate } from '../components/Calendar'
 import { Monogram } from '../components/Monogram'
 import { api, ApiError } from '../lib/api'
+import { IS_DEMO, siteUrl } from '../lib/site'
 
 const TOKEN_KEY = 'aoh-admin-token'
 
@@ -75,7 +76,7 @@ export function AdminApp() {
   return (
     <div className="admin">
       <header className="admin__bar">
-        <a href="/" className="admin__brand">
+        <a href={siteUrl('/')} className="admin__brand">
           <Monogram className="admin__mono" />
           <span>Terminverwaltung</span>
         </a>
@@ -87,6 +88,11 @@ export function AdminApp() {
             Kalender &amp; Zeiten
           </button>
         </nav>
+        {IS_DEMO && (
+          <a href={siteUrl('/')} className="admin__logout">
+            Zur Website
+          </a>
+        )}
         <button className="admin__logout" onClick={logout}>
           Abmelden
         </button>
@@ -124,6 +130,18 @@ function Login({ onLogin }: { onLogin: (token: string) => void }) {
       <form onSubmit={submit} className="admin-login__card">
         <Monogram className="admin-login__mono" title="Art of Hair" />
         <h1>Terminverwaltung</h1>
+        {IS_DEMO && (
+          <div className="admin-demo">
+            <strong>Demo-Zugang</strong>
+            <span>
+              Passwort: <code>demo</code>
+            </span>
+            <small>Beispieldaten – Änderungen bleiben nur in Ihrem Browser.</small>
+            <button type="button" className="admin-btn admin-btn--small" onClick={() => setPassword('demo')}>
+              Passwort einsetzen
+            </button>
+          </div>
+        )}
         <label htmlFor="pw">Passwort</label>
         <input id="pw" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus />
         {error && <p className="admin__error" role="alert">{error}</p>}

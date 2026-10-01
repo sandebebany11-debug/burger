@@ -1,5 +1,4 @@
 import type { AvailabilityResponse, BookingRequestInput } from '../../shared/booking'
-import { demoAvailability, demoRequest } from './demoApi'
 import { IS_DEMO } from './site'
 
 export class ApiError extends Error {
@@ -18,7 +17,10 @@ export async function api<T>(path: string, init: RequestInit & { token?: string 
   if (init.token) headers.set('authorization', `Bearer ${init.token}`)
   let res: Response
   try {
-    res = await fetch(`/api${path}`, { ...init, headers })
+    if (IS_DEMO) {
+      const { demoFetch } = await import('../demo/demoBackend')
+      res = await demoFetch(path, { ...init, headers })
+    } else res = await fetch(`/api${path}`, { ...init, headers })
   } catch {
     throw new ApiError(0, 'Keine Verbindung. Bitte prüfen Sie Ihre Internetverbindung.')
   }
@@ -27,20 +29,10 @@ export async function api<T>(path: string, init: RequestInit & { token?: string 
   return data as T
 }
 
-const pause = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
 export const getAvailability = async (month: string, staff: string | null = null): Promise<AvailabilityResponse> => {
-  if (IS_DEMO) {
-    await pause(250)
-    return demoAvailability(month, staff)
-  }
   return api<AvailabilityResponse>(`/availability?month=${month}${staff ? `&staff=${staff}` : ''}`)
 }
 
 export const sendRequest = async (input: BookingRequestInput) => {
-  if (IS_DEMO) {
-    await pause(700)
-    return demoRequest(input)
-  }
   return api<{ ok: true; id?: string }>('/requests', { method: 'POST', body: JSON.stringify(input) })
 }

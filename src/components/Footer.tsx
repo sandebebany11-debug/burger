@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { MONOGRAM_PATH, MONOGRAM_VIEWBOX } from '../data/monogram'
 import { business, hours } from '../data/content'
 import { gsap, prefersReducedMotion } from '../lib/motion'
-import { siteUrl } from '../lib/site'
+import { IS_DEMO, siteUrl } from '../lib/site'
 import { Button } from './Button'
 import { GoldDust } from './GoldDust'
 
@@ -133,6 +133,11 @@ export function Footer({ home = true }: { home?: boolean }) {
             <a href={siteUrl('/datenschutz/')} className="link-u">
               Datenschutz
             </a>
+            {IS_DEMO && (
+              <a href={siteUrl('/admin/')} className="link-u">
+                Inhaber-Login (Demo)
+              </a>
+            )}
           </nav>
         </div>
       </div>
