@@ -12,6 +12,7 @@ import { Booking } from './sections/Booking'
 import { Color } from './sections/Color'
 import { Gallery } from './sections/Gallery'
 import { Hero } from './sections/Hero'
+import { Instagram } from './sections/Instagram'
 import { KevinMurphy } from './sections/KevinMurphy'
 import { Prices } from './sections/Prices'
 import { Salon } from './sections/Salon'
@@ -64,6 +65,7 @@ export function App() {
         <Booking />
         <Marquee items={['Leverkusen', 'Lützenkirchen', 'Di – Fr 9 – 18', 'Sa 9 – 14', 'Art of Hair']} direction={-1} />
         <Visit />
+        <Instagram />
       </main>
       <Footer />
       <MobileCta />

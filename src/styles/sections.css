@@ -3410,3 +3410,129 @@
     transform: scale(1.15);
   }
 }
+
+/* ==========================================================================
+   Instagram
+   ========================================================================== */
+.insta {
+  overflow: hidden;
+}
+.insta__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+.insta__text .lead {
+  margin: 1.5rem 0 2.25rem;
+}
+.insta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.9rem 1.8rem 0.9rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(120deg, rgba(207, 171, 112, 0.18), rgba(207, 171, 112, 0.05));
+  border: 1px solid rgba(207, 171, 112, 0.5);
+  transition:
+    transform 0.5s var(--ease-out),
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.insta__btn:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(120deg, rgba(207, 171, 112, 0.3), rgba(207, 171, 112, 0.1));
+  box-shadow: 0 18px 50px -18px rgba(207, 171, 112, 0.6);
+}
+.insta__btn-icon {
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e6c992, #b48e57);
+  color: var(--ink);
+  transition: transform 0.6s var(--ease-out);
+}
+.insta__btn:hover .insta__btn-icon {
+  transform: rotate(-12deg) scale(1.06);
+}
+.insta__btn small {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.insta__btn strong {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  overflow-wrap: anywhere;
+}
+.insta__wall {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.insta__tile {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 6px;
+  animation: insta-float 7s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1.1s);
+}
+.insta__tile .img {
+  width: 100%;
+  height: 100%;
+}
+.insta__tile img {
+  transition:
+    transform 1.2s var(--ease-out),
+    opacity 0.9s;
+}
+.insta__hover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--cream);
+  background: rgba(16, 14, 12, 0.45);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.insta__wall:hover .insta__tile img {
+  transform: scale(1.08);
+}
+.insta__tile:hover .insta__hover {
+  opacity: 1;
+}
+@keyframes insta-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@media (max-width: 900px) {
+  .insta__grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .insta__btn {
+    padding-right: 1.2rem;
+  }
+  .insta__btn-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .insta__tile {
+    animation: none;
+  }
+}
