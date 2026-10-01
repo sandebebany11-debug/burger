@@ -62,8 +62,8 @@ export function Services() {
                 <span className="service__from">{s.from}</span>
               </button>
               <div id={`service-detail-${i}`} className="service__detail">
-                <div className="service__detail-inner">
-                  <Img id={s.image} className="service__thumb" sizes="90vw" />
+                <div className={`service__detail-inner ${s.image ? '' : 'is-text'}`}>
+                  {s.image && <Img id={s.image} className="service__thumb" sizes="90vw" />}
                   <p>{s.detail}</p>
                 </div>
               </div>
@@ -76,7 +76,15 @@ export function Services() {
           <div ref={floater} className="services__frame">
             {services.map((s, i) => (
               <div key={s.title} className={`services__img ${i === active ? 'is-active' : ''}`}>
-                <Img id={s.image} sizes="(min-width: 900px) 30vw, 1px" />
+                {s.image ? (
+                  <Img id={s.image} sizes="(min-width: 900px) 30vw, 1px" />
+                ) : (
+                  <div className="services__text-card">
+                    <span className="num">{String(i + 1).padStart(2, '0')}</span>
+                    <strong>{s.title}</strong>
+                    <span>{s.detail}</span>
+                  </div>
+                )}
               </div>
             ))}
             <div className="services__caption">

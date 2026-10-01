@@ -3,10 +3,13 @@ import {
   BOOKING_HORIZON_DAYS,
   DAY_MODES,
   REQUEST_STATUSES,
+  SLOT_CAPACITY,
   addDays,
   holidayName,
   isIsoDate,
+  isStaffId,
   slotsForDate,
+  staffName,
   todayInBerlin,
   type AdminDay,
   type AdminRequest,
@@ -33,11 +36,15 @@ import type { KVStore } from './store'
 // ---------------------------------------------------------------------------
 // Datenmodell im Key-Value-Store
 //
-//   req/<datum>/<id>        Terminanfrage (Kontaktdaten verschlüsselt)
-//   lock/<datum>/<zeit>     Reservierung eines Zeitfensters (verhindert
-//                           doppelte Buchungen, atomar über setIfNew)
-//   day/<datum>             Einstellungen des Inhabers für einen Tag
-//   rl/<zweck>/<ip-hash>    Rate-Limit-Zähler (ohne Klar-IP)
+//   req/<datum>/<id>               Terminanfrage (Kontaktdaten verschlüsselt)
+//   lock/<datum>/<zeit>/<person>   Reservierung einer Person zu einer Zeit
+//                                  (verhindert Doppelbuchungen, atomar)
+//   day/<datum>                    Einstellungen des Inhabers für einen Tag
+//   rl/<zweck>/<ip-hash>           Rate-Limit-Zähler (ohne Klar-IP)
+//
+// Kapazität: Pro Zeitfenster können so viele Anfragen gestellt werden, wie
+// Personen im Team sind. Wer eine bestimmte Person wählt, belegt nur deren
+// Stuhl; „egal wer“ zählt nur gegen die Gesamtkapazität.
 // ---------------------------------------------------------------------------
 
 interface StoredRequest {
@@ -46,6 +53,7 @@ interface StoredRequest {
   updatedAt: string
   status: RequestStatus
   service: string
+  staff: string | null
   date: string
   time: string | null
   /** AES-GCM verschlüsselt: { name, phone, email, message } */
@@ -80,7 +88,8 @@ export interface HandlerDeps {
   now?: () => Date
 }
 
-const ACTIVE: RequestStatus[] = ['pending', 'confirmed', 'completed']
+/** Status, die einen Platz belegen. */
+const ACTIVE: RequestStatus[] = ['pending', 'proposed', 'confirmed', 'completed']
 
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -90,8 +99,12 @@ const json = (data: unknown, status = 200) =>
 
 const fail = (status: number, error: string) => json({ error }, status)
 
-const clean = (v: unknown, max: number) =>
-  typeof v === 'string' ? v.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim().slice(0, max) : ''
+// eslint-disable-next-line no-control-regex
+const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g
+const clean = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(CONTROL, '').trim().slice(0, max) : '')
+
+const PHONE = /^[+0-9][0-9 ()/.-]{4,28}$/
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 export function createHandler(deps: HandlerDeps) {
   const { store, secrets } = deps
@@ -121,20 +134,22 @@ export function createHandler(deps: HandlerDeps) {
   async function loadRequests(prefix: string): Promise<StoredRequest[]> {
     const keys = await store.list(`req/${prefix}`)
     const items = await Promise.all(keys.map((k) => store.get<StoredRequest>(k)))
-    return items.filter((r): r is StoredRequest => r !== null)
+    return items.filter((r): r is StoredRequest => r !== null).map((r) => ({ ...r, staff: r.staff ?? null }))
   }
 
+  const contactOf = (r: StoredRequest) => decrypt<Contact>(secrets.encryptionKey, r.contact)
+
   function toAdmin(r: StoredRequest): AdminRequest {
-    const c = decrypt<Contact>(secrets.encryptionKey, r.contact)
     return {
       id: r.id,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
       status: r.status,
       service: r.service,
+      staff: r.staff,
       date: r.date,
       time: r.time,
-      ...c,
+      ...contactOf(r),
       ownerNote: r.ownerNote ? decrypt<string>(secrets.encryptionKey, r.ownerNote) : '',
     }
   }
@@ -144,18 +159,21 @@ export function createHandler(deps: HandlerDeps) {
     return date > today && date <= addDays(today, BOOKING_HORIZON_DAYS)
   }
 
-  /** Berechnet Status und Zeitfenster eines Tages. */
-  function computeDay(date: string, settings: DaySettings, requests: StoredRequest[]) {
+  /** Ist ein Zeitfenster für eine bestimmte Person (oder „egal“) noch frei? */
+  function slotFree(time: string, settings: DaySettings, active: StoredRequest[], staff: string | null, ignoreId?: string) {
+    if (settings.blocked.includes(time)) return false
+    const atTime = active.filter((r) => r.time === time && r.id !== ignoreId)
+    if (atTime.length >= SLOT_CAPACITY) return false
+    if (staff && atTime.some((r) => r.staff === staff)) return false
+    return true
+  }
+
+  /** Berechnet Status und Zeitfenster eines Tages – optional aus Sicht einer Person. */
+  function computeDay(date: string, settings: DaySettings, requests: StoredRequest[], staff: string | null) {
     const holiday = holidayName(date)
     const slotTimes = slotsForDate(date)
     const active = requests.filter((r) => ACTIVE.includes(r.status))
-
-    const slots: AdminSlot[] = slotTimes.map((time) => {
-      if (settings.blocked.includes(time)) return { time, state: 'blocked' }
-      const r = active.find((x) => x.time === time)
-      if (r) return { time, state: r.status === 'pending' ? 'requested' : 'confirmed', requestId: r.id }
-      return { time, state: 'free' }
-    })
+    const free = slotTimes.map((time) => ({ time, free: slotFree(time, settings, active, staff) }))
 
     let status: DayStatus
     if (!isBookableDate(date)) status = date <= todayInBerlin(now()) ? 'past' : 'closed'
@@ -163,23 +181,19 @@ export function createHandler(deps: HandlerDeps) {
       status = 'closed'
     else if (settings.mode !== 'auto') status = settings.mode
     else {
-      const free = slots.filter((s) => s.state === 'free').length
-      status = free === 0 ? 'full' : free === slots.length ? 'available' : 'partial'
+      const n = free.filter((s) => s.free).length
+      status = n === 0 ? 'full' : n === free.length ? 'available' : 'partial'
     }
-    return { status, slots, holiday }
+    return { status, free, holiday, active }
   }
 
   function monthDates(month: string): string[] {
     const dates: string[] = []
-    let d = `${month}-01`
-    while (d.startsWith(month)) {
-      dates.push(d)
-      d = addDays(d, 1)
-    }
+    for (let d = `${month}-01`; d.startsWith(month); d = addDays(d, 1)) dates.push(d)
     return dates
   }
 
-  async function monthData(month: string) {
+  async function monthData(month: string, staff: string | null) {
     const [requests, dayKeys] = await Promise.all([loadRequests(month), store.list(`day/${month}`)])
     const settingsByDate = new Map<string, DaySettings>()
     await Promise.all(
@@ -191,33 +205,38 @@ export function createHandler(deps: HandlerDeps) {
     return monthDates(month).map((date) => {
       const settings = settingsByDate.get(date) ?? defaultDay()
       const dayRequests = requests.filter((r) => r.date === date)
-      return { date, settings, requests: dayRequests, ...computeDay(date, settings, dayRequests) }
+      return { date, settings, requests: dayRequests, ...computeDay(date, settings, dayRequests, staff) }
     })
   }
 
-  async function acquireLock(date: string, time: string, requestId: string): Promise<boolean> {
-    const key = `lock/${date}/${time}`
+  const lockKey = (date: string, time: string, staff: string) => `lock/${date}/${time}/${staff}`
+
+  /** Reserviert eine benannte Person atomar. Ohne Person ist keine Sperre nötig. */
+  async function acquireLock(date: string, time: string | null, staff: string | null, requestId: string) {
+    if (!time || !staff) return true
+    const key = lockKey(date, time, staff)
     if (await store.setIfNew(key, { requestId } satisfies SlotLock)) return true
-    // Sperre existiert – ist die zugehörige Anfrage noch aktiv?
     const lock = await store.get<SlotLock>(key)
-    if (lock) {
-      const holder = await store.get<StoredRequest>(`req/${date}/${lock.requestId}`)
-      if (holder && ACTIVE.includes(holder.status) && holder.id !== requestId) return false
+    if (lock && lock.requestId !== requestId) {
+      const holder = (await store.list(`req/${date}/`)).find((k) => k.endsWith(`/${lock.requestId}`))
+      const r = holder ? await store.get<StoredRequest>(holder) : null
+      if (r && ACTIVE.includes(r.status) && r.date === date && r.time === time && r.staff === staff) return false
     }
     await store.set(key, { requestId } satisfies SlotLock)
     return true
   }
 
-  async function releaseLock(date: string, time: string | null, requestId: string) {
-    if (!time) return
-    const key = `lock/${date}/${time}`
+  async function releaseLock(date: string, time: string | null, staff: string | null, requestId: string) {
+    if (!time || !staff) return
+    const key = lockKey(date, time, staff)
     const lock = await store.get<SlotLock>(key)
     if (lock?.requestId === requestId) await store.delete(key)
   }
 
   async function findRequest(id: string): Promise<StoredRequest | null> {
     const key = (await store.list('req/')).find((k) => k.endsWith(`/${id}`))
-    return key ? store.get<StoredRequest>(key) : null
+    const r = key ? await store.get<StoredRequest>(key) : null
+    return r ? { ...r, staff: r.staff ?? null } : null
   }
 
   // ---- Öffentliche Endpunkte ----------------------------------------------
@@ -225,7 +244,9 @@ export function createHandler(deps: HandlerDeps) {
   async function getAvailability(url: URL) {
     const month = url.searchParams.get('month') ?? ''
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return fail(400, 'Ungültiger Monat.')
-    const days = await monthData(month)
+    const staffParam = url.searchParams.get('staff')
+    const staff = isStaffId(staffParam) ? staffParam : null
+    const days = await monthData(month, staff)
     const body: AvailabilityResponse = {
       month,
       days: days.map(
@@ -236,7 +257,7 @@ export function createHandler(deps: HandlerDeps) {
           slots:
             d.status === 'closed' || d.status === 'past'
               ? []
-              : d.slots.map((s) => ({ time: s.time, free: s.state === 'free' && d.status !== 'full' })),
+              : d.free.map((s) => ({ time: s.time, free: s.free && d.status !== 'full' })),
         }),
       ),
     }
@@ -263,32 +284,33 @@ export function createHandler(deps: HandlerDeps) {
     const email = clean(input.email, 120).toLowerCase()
     const message = clean(input.message, 1000)
     const service = clean(input.service, 80)
+    const staff = isStaffId(input.staff) ? input.staff : null
     const date = input.date
     const time = input.time ? clean(input.time, 5) : null
 
     const errors: Record<string, string> = {}
     if (name.length < 2) errors.name = 'Bitte geben Sie Ihren Namen an.'
-    if (!/^[+0-9][0-9 ()/.-]{4,28}$/.test(phone)) errors.phone = 'Bitte geben Sie eine gültige Telefonnummer an.'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = 'Bitte geben Sie eine gültige E-Mail-Adresse an.'
+    if (!PHONE.test(phone)) errors.phone = 'Bitte geben Sie eine gültige Telefonnummer an.'
+    if (email && !EMAIL.test(email)) errors.email = 'Diese E-Mail-Adresse scheint nicht zu stimmen.'
     if (!(BOOKABLE_SERVICES as readonly string[]).includes(service)) errors.service = 'Bitte wählen Sie eine Leistung.'
     if (input.consent !== true) errors.consent = 'Bitte bestätigen Sie die Datenschutzhinweise.'
     if (!isIsoDate(date)) errors.date = 'Bitte wählen Sie einen Tag.'
     if (Object.keys(errors).length) return json({ error: 'Bitte prüfen Sie Ihre Angaben.', fields: errors }, 422)
 
     const [settings, dayRequests] = await Promise.all([loadDaySettings(date), loadRequests(date)])
-    const day = computeDay(date, settings, dayRequests)
+    const day = computeDay(date, settings, dayRequests, staff)
     if (day.status !== 'available' && day.status !== 'partial')
       return json({ error: 'Dieser Tag ist leider nicht verfügbar.', fields: { date: 'Tag nicht verfügbar.' } }, 409)
     if (time) {
-      const slot = day.slots.find((s) => s.time === time)
+      const slot = day.free.find((s) => s.time === time)
       if (!slot) return fail(422, 'Ungültige Uhrzeit.')
-      if (slot.state !== 'free')
-        return json({ error: 'Dieses Zeitfenster ist leider nicht mehr frei.', fields: { time: 'Bereits vergeben.' } }, 409)
+      if (!slot.free)
+        return json({ error: 'Diese Uhrzeit ist leider schon vergeben.', fields: { time: 'Bereits vergeben.' } }, 409)
     }
 
     const id = newId()
-    if (time && !(await acquireLock(date, time, id)))
-      return json({ error: 'Dieses Zeitfenster wurde gerade vergeben.', fields: { time: 'Bereits vergeben.' } }, 409)
+    if (!(await acquireLock(date, time, staff, id)))
+      return json({ error: 'Diese Uhrzeit wurde gerade vergeben.', fields: { time: 'Bereits vergeben.' } }, 409)
 
     const ts = now().toISOString()
     const stored: StoredRequest = {
@@ -297,6 +319,7 @@ export function createHandler(deps: HandlerDeps) {
       updatedAt: ts,
       status: 'pending',
       service,
+      staff,
       date,
       time,
       contact: encrypt(secrets.encryptionKey, { name, phone, email, message } satisfies Contact),
@@ -332,30 +355,49 @@ export function createHandler(deps: HandlerDeps) {
     return json({ requests: out })
   }
 
+  /**
+   * Inhaber ändert Status, Notiz oder schlägt einen anderen Termin vor
+   * (anderer Tag, andere Uhrzeit, andere Person).
+   */
   async function updateRequest(id: string, req: Request) {
-    const body = (await req.json().catch(() => ({}))) as { status?: string; ownerNote?: string; time?: string | null }
+    const body = (await req.json().catch(() => ({}))) as {
+      status?: string
+      ownerNote?: string
+      date?: string
+      time?: string | null
+      staff?: string | null
+    }
     const r = await findRequest(id)
     if (!r) return fail(404, 'Anfrage nicht gefunden.')
 
     const nextStatus = (body.status ?? r.status) as RequestStatus
     if (!REQUEST_STATUSES.includes(nextStatus)) return fail(400, 'Ungültiger Status.')
+    const nextDate = body.date === undefined ? r.date : body.date
+    if (!isIsoDate(nextDate)) return fail(400, 'Ungültiges Datum.')
     const nextTime = body.time === undefined ? r.time : body.time ? clean(body.time, 5) : null
-    if (nextTime && !slotsForDate(r.date).includes(nextTime)) return fail(400, 'Ungültige Uhrzeit.')
+    if (nextTime && !slotsForDate(nextDate).includes(nextTime)) return fail(400, 'Ungültige Uhrzeit für diesen Tag.')
+    const nextStaff = body.staff === undefined ? r.staff : isStaffId(body.staff) ? body.staff : null
 
     const wasActive = ACTIVE.includes(r.status)
     const willBeActive = ACTIVE.includes(nextStatus)
+    const moved = nextDate !== r.date || nextTime !== r.time || nextStaff !== r.staff
 
-    // Zeitfenster neu belegen, falls nötig – verhindert Doppelbuchungen
-    if (willBeActive && nextTime && (!wasActive || nextTime !== r.time)) {
-      const settings = await loadDaySettings(r.date)
-      if (settings.blocked.includes(nextTime)) return fail(409, 'Dieses Zeitfenster ist blockiert.')
-      if (!(await acquireLock(r.date, nextTime, r.id)))
+    // Neuen Platz prüfen und reservieren – verhindert Doppelbuchungen
+    if (willBeActive && nextTime && (!wasActive || moved)) {
+      const [settings, dayRequests] = await Promise.all([loadDaySettings(nextDate), loadRequests(nextDate)])
+      const active = dayRequests.filter((x) => ACTIVE.includes(x.status))
+      if (!slotFree(nextTime, settings, active, nextStaff, r.id))
+        return fail(409, `${staffName(nextStaff)} ist um ${nextTime} Uhr bereits belegt oder das Zeitfenster ist gesperrt.`)
+      if (!(await acquireLock(nextDate, nextTime, nextStaff, r.id)))
         return fail(409, 'Dieses Zeitfenster ist bereits durch eine andere Anfrage belegt.')
     }
-    if (wasActive && r.time && (!willBeActive || nextTime !== r.time)) await releaseLock(r.date, r.time, r.id)
+    if (wasActive && (!willBeActive || moved)) await releaseLock(r.date, r.time, r.staff, r.id)
 
+    if (nextDate !== r.date) await store.delete(`req/${r.date}/${r.id}`)
     r.status = nextStatus
+    r.date = nextDate
     r.time = nextTime
+    r.staff = nextStaff
     if (typeof body.ownerNote === 'string') {
       const note = clean(body.ownerNote, 1000)
       r.ownerNote = note ? encrypt(secrets.encryptionKey, note) : undefined
@@ -368,7 +410,7 @@ export function createHandler(deps: HandlerDeps) {
   async function deleteRequest(id: string) {
     const r = await findRequest(id)
     if (!r) return fail(404, 'Anfrage nicht gefunden.')
-    await releaseLock(r.date, r.time, r.id)
+    await releaseLock(r.date, r.time, r.staff, r.id)
     await store.delete(`req/${r.date}/${r.id}`)
     return json({ ok: true })
   }
@@ -376,20 +418,25 @@ export function createHandler(deps: HandlerDeps) {
   async function adminDays(url: URL) {
     const month = url.searchParams.get('month') ?? ''
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return fail(400, 'Ungültiger Monat.')
-    const days = await monthData(month)
-    const out: AdminDay[] = days.map((d) => {
-      const names = new Map(d.requests.map((r) => [r.id, decrypt<Contact>(secrets.encryptionKey, r.contact).name]))
-      return {
-        date: d.date,
-        mode: d.settings.mode,
-        status: d.status,
-        note: d.settings.note,
-        publicNote: d.settings.publicNote,
-        holiday: d.holiday,
-        slots: d.slots.map((s) => (s.requestId ? { ...s, name: names.get(s.requestId) } : s)),
-        requestCount: d.requests.filter((r) => ACTIVE.includes(r.status)).length,
-      }
-    })
+    const days = await monthData(month, null)
+    const out: AdminDay[] = days.map((d) => ({
+      date: d.date,
+      mode: d.settings.mode,
+      status: d.status,
+      note: d.settings.note,
+      publicNote: d.settings.publicNote,
+      holiday: d.holiday,
+      slots: slotsForDate(d.date).map((time): AdminSlot => {
+        const reqs = d.active.filter((r) => r.time === time)
+        const blocked = d.settings.blocked.includes(time)
+        return {
+          time,
+          state: blocked ? 'blocked' : reqs.length >= SLOT_CAPACITY ? 'full' : reqs.length ? 'partial' : 'free',
+          requests: reqs.map((r) => ({ id: r.id, name: contactOf(r).name, staff: r.staff, status: r.status })),
+        }
+      }),
+      requestCount: d.active.length,
+    }))
     return json({ month, days: out })
   }
 
@@ -494,8 +541,9 @@ export function createNotifier(env: Record<string, string | undefined>) {
       'Neue Terminanfrage über die Website:',
       '',
       `Leistung: ${r.service}`,
+      `Bei: ${staffName(r.staff)}`,
       `Wunschtermin: ${date}${r.time ? `, ${r.time} Uhr` : ' (Uhrzeit flexibel)'}`,
-      ...(includeContact ? ['', `Name: ${r.name}`, `Telefon: ${r.phone}`, `E-Mail: ${r.email}`] : []),
+      ...(includeContact ? ['', `Name: ${r.name}`, `Telefon: ${r.phone}`, `E-Mail: ${r.email || '–'}`] : []),
       '',
       `Details und Bestätigung im Admin-Bereich: ${siteUrl}/admin/`,
     ]

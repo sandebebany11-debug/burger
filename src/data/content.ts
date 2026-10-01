@@ -42,17 +42,18 @@ export interface Service {
   title: string
   detail: string
   from: string
-  image: ImageId
+  /** Ohne Bild wird nur der Text gezeigt */
+  image?: ImageId
 }
 
 export const services: Service[] = [
   { title: 'Damen', detail: 'Schnitt mit Beratung & Styling, Cut & Go', from: 'ab 36 €', image: 'damen-bob' },
   { title: 'Herren', detail: 'Klassisch, Fade, Taper – präzise Konturen', from: 'ab 27 €', image: 'herren-taper' },
-  { title: 'Bart', detail: 'Bartrasur und Bartfärben', from: 'ab 17 €', image: 'simyan-bart' },
+  { title: 'Bart', detail: 'Bartrasur und Bartfärben', from: 'ab 17 €', image: 'herren-mid-fade' },
   { title: 'Coloration', detail: 'Ansatzfärbung, Farbe & Tönung', from: 'ab 43 €', image: 'brunette-babylights' },
   { title: 'Balayage & Strähnen', detail: 'Moderne Farbtechniken, Ombré, Foliensträhnen', from: 'ab 60 €', image: 'balayage-blond' },
   { title: 'Styling & Braut', detail: 'Föhnen, Hochsteckfrisuren, Brautstyling', from: 'ab 25 €', image: 'braut-halfup' },
-  { title: 'Kinder', detail: 'Haarschnitt bis 12 Jahre', from: '18 €', image: 'ah-wand' },
+  { title: 'Kinder', detail: 'Haarschnitt bis 12 Jahre', from: '18 €' },
 ]
 
 export interface PriceRow {
@@ -202,14 +203,11 @@ export const colorWorks: { image: ImageId; title: string; caption: string }[] = 
 export const gallery: ImageId[] = [
   'herren-taper',
   'balayage-blond',
-  'simyan-foehnen',
   'braut-halfup',
   'herren-mid-fade',
   'damen-locken-blond',
-  'ah-wand',
   'damen-bob',
   'herren-low-fade',
   'brunette-babylights',
-  'simyan-bart',
   'damen-straehnen-blond',
 ]

@@ -1,11 +1,12 @@
 // Gemeinsame Regeln für Frontend und Backend des Terminsystems.
 // Öffnungszeiten laut bisheriger Website: Di–Fr 09:00–18:00, Sa 09:00–14:00.
 
-export const REQUEST_STATUSES = ['pending', 'confirmed', 'declined', 'completed'] as const
+export const REQUEST_STATUSES = ['pending', 'proposed', 'confirmed', 'declined', 'completed'] as const
 export type RequestStatus = (typeof REQUEST_STATUSES)[number]
 
 export const STATUS_LABEL: Record<RequestStatus, string> = {
   pending: 'Offen',
+  proposed: 'Alternative vorgeschlagen',
   confirmed: 'Bestätigt',
   declined: 'Abgelehnt',
   completed: 'Erledigt',
@@ -24,23 +25,41 @@ export const DAY_STATUS_LABEL: Record<DayStatus, string> = {
   past: 'Vergangen',
 }
 
-/** Leistungen, die im Formular gewählt werden können (aus der Preisliste). */
+/**
+ * Leistungen für die Terminanfrage – bewusst wenige, leicht verständliche
+ * Gruppen. Details klärt der Salon beim Rückruf.
+ */
 export const BOOKABLE_SERVICES = [
-  'Damen – Haarschnitt inkl. Beratung & Styling',
-  'Damen – Cut & Go',
-  'Föhnen / Styling',
-  'Hochsteckfrisur',
+  'Damen-Haarschnitt',
+  'Herren-Haarschnitt',
+  'Kinder-Haarschnitt',
+  'Farbe, Strähnen oder Balayage',
+  'Föhnen, Styling oder Hochsteckfrisur',
   'Brautfrisur',
-  'Herren – Haarschnitt',
-  'Herren – Haare färben',
-  'Bartrasur / Bart färben',
-  'Kinderhaarschnitt (bis 12 Jahre)',
-  'Ansatzfärbung',
-  'Strähnen',
-  'Balayage',
-  'Ombré',
-  'Beratung / Sonstiges',
+  'Bart',
+  'Etwas anderes / Beratung',
 ] as const
+
+/** Mitarbeiter, die Kunden für ihren Termin wählen können. */
+export const STAFF = [
+  { id: 'simyan', name: 'Simyan', role: 'Inhaber & Friseurmeister' },
+  { id: 'graziella', name: 'Graziella', role: 'Top-Stylistin' },
+  { id: 'vanessa', name: 'Vanessa', role: 'Top-Stylistin' },
+  { id: 'chiara', name: 'Chiara', role: 'Top-Stylistin' },
+  { id: 'rosel', name: 'Rosel', role: 'Auszubildende, 3. Lehrjahr' },
+  { id: 'sarkar', name: 'Sarkar', role: 'Auszubildender, 2. Lehrjahr' },
+] as const
+
+export type StaffId = (typeof STAFF)[number]['id']
+
+/** Leerer Wert = „Egal, wer frei ist“. */
+export const staffName = (id: string | null | undefined) =>
+  STAFF.find((s) => s.id === id)?.name ?? 'Egal, wer frei ist'
+
+export const isStaffId = (v: unknown): v is StaffId => STAFF.some((s) => s.id === v)
+
+/** Wie viele Termine gleichzeitig angefragt werden können (eine Person je Stuhl). */
+export const SLOT_CAPACITY = STAFF.length
 
 /** Buchungsfenster: frühestens morgen, spätestens in so vielen Tagen. */
 export const BOOKING_HORIZON_DAYS = 120
@@ -159,10 +178,13 @@ export interface AvailabilityResponse {
 
 export interface BookingRequestInput {
   service: string
+  /** Gewünschte Person, leer = egal */
+  staff: string | null
   date: string
   time: string | null
   name: string
   phone: string
+  /** optional – viele Kunden möchten nur telefonisch erreichbar sein */
   email: string
   message: string
   consent: boolean
@@ -178,6 +200,7 @@ export interface AdminRequest {
   updatedAt: string
   status: RequestStatus
   service: string
+  staff: string | null
   date: string
   time: string | null
   name: string
@@ -187,11 +210,18 @@ export interface AdminRequest {
   ownerNote: string
 }
 
+export interface AdminSlotRequest {
+  id: string
+  name: string
+  staff: string | null
+  status: RequestStatus
+}
+
 export interface AdminSlot {
   time: string
-  state: 'free' | 'blocked' | 'requested' | 'confirmed'
-  requestId?: string
-  name?: string
+  /** frei = noch Platz, voll = alle Stühle belegt */
+  state: 'free' | 'blocked' | 'partial' | 'full'
+  requests: AdminSlotRequest[]
 }
 
 export interface AdminDay {

@@ -29,12 +29,12 @@ export async function api<T>(path: string, init: RequestInit & { token?: string 
 
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export const getAvailability = async (month: string): Promise<AvailabilityResponse> => {
+export const getAvailability = async (month: string, staff: string | null = null): Promise<AvailabilityResponse> => {
   if (IS_DEMO) {
     await pause(250)
-    return demoAvailability(month)
+    return demoAvailability(month, staff)
   }
-  return api<AvailabilityResponse>(`/availability?month=${month}`)
+  return api<AvailabilityResponse>(`/availability?month=${month}${staff ? `&staff=${staff}` : ''}`)
 }
 
 export const sendRequest = async (input: BookingRequestInput) => {

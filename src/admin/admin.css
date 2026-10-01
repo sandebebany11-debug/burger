@@ -402,3 +402,69 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Vorschlag / Alternativtermin */
+.badge--proposed {
+  background: rgba(120, 150, 210, 0.2);
+  color: #b9cdf5;
+}
+.req--proposed {
+  border-left-color: #7f9bd6;
+}
+.req__call {
+  font-weight: 700;
+}
+.req__propose-open {
+  align-self: flex-start;
+}
+.req__propose {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  padding: 0.9rem;
+  border: 1px solid var(--line-light);
+  border-radius: 8px;
+}
+.req__propose label span {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(244, 239, 231, 0.55);
+}
+.req__propose input,
+.req__propose select {
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--line-light);
+  background: rgba(244, 239, 231, 0.04);
+  color: var(--cream);
+}
+.req__propose select option {
+  background: var(--ink-2);
+}
+.req__propose-actions,
+.req__propose .admin__hint,
+.req__propose .admin__error {
+  grid-column: 1 / -1;
+}
+.req__propose-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.admin-btn--ok {
+  background: var(--ok);
+  border-color: var(--ok);
+}
+.slot-admin__state {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.slot-admin__req {
+  color: #e8c779;
+  font-size: 0.85rem;
+}

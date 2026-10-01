@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
+  STAFF,
+  slotsForDate,
+  staffName,
   DAY_STATUS_LABEL,
   STATUS_LABEL,
   todayInBerlin,
@@ -155,7 +158,7 @@ function Requests({ call }: { call: Call }) {
     load()
   }, [load])
 
-  const update = async (id: string, body: Partial<Pick<AdminRequest, 'status' | 'ownerNote'>>) => {
+  const update = async (id: string, body: Partial<Pick<AdminRequest, 'status' | 'ownerNote' | 'date' | 'time' | 'staff'>>) => {
     setError(null)
     try {
       const res = await call<{ request: AdminRequest }>(`/admin/requests/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
@@ -187,7 +190,7 @@ function Requests({ call }: { call: Call }) {
     <section>
       <div className="admin__toolbar">
         <div className="admin__filters" role="group" aria-label="Status filtern">
-          {(['pending', 'confirmed', 'declined', 'completed', 'all'] as const).map((s) => (
+          {(['pending', 'proposed', 'confirmed', 'declined', 'completed', 'all'] as const).map((s) => (
             <button key={s} aria-pressed={filter === s} onClick={() => setFilter(s)}>
               {s === 'all' ? 'Alle' : STATUS_LABEL[s]}
               <span>{counts[s] ?? 0}</span>
@@ -217,8 +220,13 @@ function Requests({ call }: { call: Call }) {
             <div className="req__who">
               <strong>{r.name}</strong>
               <span>{r.service}</span>
-              <a href={`tel:${r.phone.replace(/[^+0-9]/g, '')}`}>{r.phone}</a>
-              <a href={`mailto:${r.email}`}>{r.email}</a>
+              <span>
+                Bei: <b>{staffName(r.staff)}</b>
+              </span>
+              <a href={`tel:${r.phone.replace(/[^+0-9]/g, '')}`} className="req__call">
+                Anrufen: {r.phone}
+              </a>
+              {r.email && <a href={`mailto:${r.email}`}>{r.email}</a>}
               {r.message && <p className="req__msg">„{r.message}“</p>}
               <small>Eingegangen: {new Date(r.createdAt).toLocaleString('de-DE')}</small>
             </div>
@@ -230,6 +238,7 @@ function Requests({ call }: { call: Call }) {
                   </button>
                 ))}
               </div>
+              <Propose request={r} onSave={(body) => update(r.id, body)} />
               <label className="req__note">
                 <span>Interne Notiz</span>
                 <textarea
@@ -246,6 +255,74 @@ function Requests({ call }: { call: Call }) {
         ))}
       </ul>
     </section>
+  )
+}
+
+/** Anderen Termin vorschlagen: Tag, Uhrzeit und Person ändern. */
+function Propose({
+  request: r,
+  onSave,
+}: {
+  request: AdminRequest
+  onSave: (body: { date: string; time: string | null; staff: string | null; status: RequestStatus }) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [date, setDate] = useState(r.date)
+  const [time, setTime] = useState(r.time ?? '')
+  const [staff, setStaff] = useState(r.staff ?? '')
+  const times = slotsForDate(date)
+
+  if (!open)
+    return (
+      <button className="admin-btn admin-btn--small req__propose-open" onClick={() => setOpen(true)}>
+        Anderen Termin / andere Person vorschlagen
+      </button>
+    )
+
+  const save = (status: RequestStatus) => onSave({ date, time: time || null, staff: staff || null, status })
+
+  return (
+    <div className="req__propose">
+      <label>
+        <span>Tag</span>
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+      </label>
+      <label>
+        <span>Uhrzeit</span>
+        <select value={time} onChange={(e) => setTime(e.target.value)}>
+          <option value="">flexibel</option>
+          {times.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        <span>Person</span>
+        <select value={staff} onChange={(e) => setStaff(e.target.value)}>
+          <option value="">Egal</option>
+          {STAFF.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      {times.length === 0 && <p className="admin__error">An diesem Wochentag ist geschlossen.</p>}
+      <div className="req__propose-actions">
+        <button className="admin-btn admin-btn--small" onClick={() => save('proposed')}>
+          Als Vorschlag speichern
+        </button>
+        <button className="admin-btn admin-btn--small admin-btn--ok" onClick={() => save('confirmed')}>
+          Ändern &amp; bestätigen
+        </button>
+        <button className="admin-btn admin-btn--small" onClick={() => setOpen(false)}>
+          Abbrechen
+        </button>
+      </div>
+      <p className="admin__hint">Tipp: Rufen Sie den Kunden an und besprechen Sie den Vorschlag.</p>
+    </div>
   )
 }
 
@@ -359,12 +436,15 @@ function Days({ call }: { call: Call }) {
                   <li key={s.time} className={`is-${s.state}`}>
                     <span className="slot-admin__time">{s.time}</span>
                     <span className="slot-admin__state">
-                      {s.state === 'free' && 'Verfügbar'}
                       {s.state === 'blocked' && 'Blockiert'}
-                      {s.state === 'requested' && `Angefragt – ${s.name ?? ''}`}
-                      {s.state === 'confirmed' && `Reserviert – ${s.name ?? ''}`}
+                      {s.state !== 'blocked' && s.requests.length === 0 && 'Verfügbar'}
+                      {s.requests.map((q) => (
+                        <span key={q.id} className="slot-admin__req">
+                          {q.name} · {staffName(q.staff)} · {STATUS_LABEL[q.status]}
+                        </span>
+                      ))}
                     </span>
-                    {(s.state === 'free' || s.state === 'blocked') && (
+                    {(s.state === 'blocked' || s.requests.length === 0) && (
                       <button className="admin-btn admin-btn--small" onClick={() => toggleSlot(s.time)}>
                         {s.state === 'free' ? 'Blockieren' : 'Freigeben'}
                       </button>
