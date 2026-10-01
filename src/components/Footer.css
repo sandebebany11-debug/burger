@@ -75,12 +75,6 @@
   font-size: 1.9rem;
   line-height: 1.1;
 }
-.contact-item--options {
-  display: block;
-}
-.contact-item--options .contact-options__list {
-  grid-template-columns: 1fr;
-}
 .contact-item--cta {
   display: block;
   padding-left: 70px;

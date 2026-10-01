@@ -3,8 +3,7 @@ import { business, fullAddress, hours } from "../data/content";
 import { gsap } from "../lib/motion";
 import { site } from "../lib/paths";
 import Emblem from "./Emblem";
-import ContactOptions from "./ContactOptions";
-import { ClockIcon, OpenBadge, PinIcon } from "./Icons";
+import { ClockIcon, OpenBadge, PhoneIcon, PinIcon } from "./Icons";
 import { Button, useGsap } from "./ui";
 import "./Footer.css";
 
@@ -84,8 +83,16 @@ export default function Footer() {
                 <OpenBadge className="contact-item__status" />
               </div>
             </li>
-            <li className="contact-item contact-item--options">
-              <ContactOptions title="Kontakt" />
+            <li className="contact-item">
+              <span className="contact-item__icon">
+                <PhoneIcon />
+              </span>
+              <div>
+                <p className="contact-item__label">Telefon</p>
+                <a className="contact-item__phone" href={business.phoneHref}>
+                  {business.phoneDisplay}
+                </a>
+              </div>
             </li>
             <li className="contact-item contact-item--cta">
               <Button href="#reservieren" variant="gold" cursor="Reserve">
