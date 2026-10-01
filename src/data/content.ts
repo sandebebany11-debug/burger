@@ -16,6 +16,11 @@ export const business = {
   email: 'artofhair.bysimyan@gmail.com',
   instagram: 'artofhair_bysimyan',
   instagramUrl: 'https://www.instagram.com/artofhair_bysimyan/',
+  /** Öffnet die Routenplanung zum Salon (auf dem Handy direkt in der Google-Maps-App) */
+  routeUrl:
+    'https://www.google.com/maps/dir/?api=1&destination=Art+of+Hair+by+Simyan%2C+L%C3%BCtzenkirchener+Str.+411%2C+51381+Leverkusen',
+  mapsEmbedUrl:
+    'https://maps.google.com/maps?q=L%C3%BCtzenkirchener+Str.+411%2C+51381+Leverkusen&z=16&output=embed',
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Art+of+Hair+by+Simyan+L%C3%BCtzenkirchener+Str.+411+51381+Leverkusen',
 }
 

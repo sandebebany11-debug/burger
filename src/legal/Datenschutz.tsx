@@ -84,8 +84,17 @@ export function Datenschutz() {
 
       <h2>7. Externe Links</h2>
       <p>
-        Links zu Instagram und Google Maps werden erst beim Anklicken aufgerufen. Erst dann gelten die
+        Links zu Instagram und Google Maps (Routenplanung) werden erst beim Anklicken aufgerufen. Erst dann gelten die
         Datenschutzbestimmungen des jeweiligen Anbieters.
+      </p>
+
+      <h3>Google Maps</h3>
+      <p>
+        Im Bereich „Anfahrt“ können Sie eine interaktive Karte von Google Maps (Google Ireland Limited, Gordon House,
+        Barrow Street, Dublin 4, Irland) laden. Die Karte wird erst geladen, wenn Sie auf „Interaktive Karte laden“
+        klicken. Dabei werden u. a. Ihre IP-Adresse und technische Daten an Google übertragen, ggf. auch in die USA.
+        Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die Sie durch den Klick erteilen.
+        Weitere Informationen: https://policies.google.com/privacy
       </p>
 
       <h2>8. Ihre Rechte</h2>
