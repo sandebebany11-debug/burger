@@ -72,7 +72,7 @@ export function Booking() {
   const startedAt = useRef(Date.now())
   const panel = useRef<HTMLDivElement>(null)
   const heading = useRef<HTMLHeadingElement>(null)
-  const firstRender = useRef(true)
+  const shown = useRef({ step: 0, done: false })
 
   const load = useCallback(async (m: string, s: string | null) => {
     setLoading(true)
@@ -93,10 +93,9 @@ export function Booking() {
 
   // Schrittwechsel: sanft einblenden und Fokus auf die Frage setzen
   useLayoutEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-      return
-    }
+    // Nur reagieren, wenn sich Schritt oder Abschluss wirklich geändert haben
+    if (shown.current.step === step && shown.current.done === done) return
+    shown.current = { step, done }
     heading.current?.focus({ preventScroll: true })
     const el = panel.current
     if (el) {

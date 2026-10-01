@@ -17,7 +17,10 @@ const Chars = ({ text }: { text: string }) => (
   </span>
 )
 
-const SLIDES: ImageId[] = ['simyan-foehnen', 'balayage-blond', 'herren-taper', 'braut-halfup']
+// Reihenfolge wie vom Inhaber gewünscht: Porträt, Föhnen, Bart, Logo
+const SLIDES: ImageId[] = ['simyan-portrait', 'simyan-foehnen', 'simyan-bart', 'logo-gold']
+/** Querformat-Bilder werden vollständig gezeigt statt beschnitten. */
+const CONTAIN: ImageId[] = ['logo-gold']
 
 export function Hero({ start }: { start: boolean }) {
   const root = useRef<HTMLElement>(null)
@@ -92,7 +95,12 @@ export function Hero({ start }: { start: boolean }) {
   }, [])
 
   return (
-    <section ref={root} id="top" className="hero" aria-labelledby="hero-title">
+    <section
+      ref={root}
+      id="top"
+      className={`hero ${CONTAIN.includes(SLIDES[slide]) ? 'hero--logo' : ''}`}
+      aria-labelledby="hero-title"
+    >
       <GoldDust />
       <div className="hero__glow" aria-hidden="true" />
       <div className="hero__grid wrap">
@@ -118,7 +126,7 @@ export function Hero({ start }: { start: boolean }) {
           <div className="hero__media-move">
             <div className="hero__media-inner">
               {SLIDES.map((id, i) => (
-                <div key={id} className={`hero__slide ${i === slide ? 'is-active' : ''}`} aria-hidden={i !== slide}>
+                <div key={id} className={`hero__slide ${i === slide ? 'is-active' : ''} ${CONTAIN.includes(id) ? 'hero__slide--contain' : ''}`} aria-hidden={i !== slide}>
                   {i <= reached && <Img id={id} priority={i === 0} sizes="(min-width: 900px) 42vw, 100vw" />}
                 </div>
               ))}

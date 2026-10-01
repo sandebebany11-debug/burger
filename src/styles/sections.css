@@ -3380,3 +3380,33 @@
     gap: 0.6rem;
   }
 }
+
+/* Logo-Folie im Hero: vollständig zeigen auf passendem dunklem Grund */
+.hero__slide--contain {
+  background: radial-gradient(90% 70% at 50% 45%, #2a2826 0%, #1b1a19 60%, #121110 100%);
+}
+.hero__slide--contain .img {
+  background-color: transparent;
+}
+.hero__slide--contain img {
+  object-fit: contain;
+  transform: scale(1.35);
+}
+.hero__title {
+  transition: opacity 1.2s var(--ease-in-out);
+}
+@media (max-width: 900px) {
+  /* Das Logo zeigt den Namen selbst – Schriftzug kurz ausblenden */
+  .hero--logo .hero__title {
+    opacity: 0;
+  }
+  .hero--logo .hero__media::after {
+    opacity: 0;
+  }
+  .hero__media::after {
+    transition: opacity 1.2s;
+  }
+  .hero__slide--contain img {
+    transform: scale(1.15);
+  }
+}

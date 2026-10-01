@@ -38,6 +38,7 @@ const IMAGES = [
   { id: 'team-aussen', file: 'team-aussen.jpg', focus: '50% 55%', alt: 'Das Team vor dem Salon in der Lützenkirchener Straße' },
   { id: 'salon-aussen', file: 'salon-eroeffnung.jpg', focus: '50% 40%', alt: 'Außenansicht des Salons Art of Hair by Simyan in Leverkusen-Lützenkirchen' },
   { id: 'ah-wand', file: 'ah-wand.jpg', focus: '50% 30%', alt: 'Beleuchtetes AH-Logo auf der Natursteinwand, darunter Kevin.Murphy Stylingprodukte' },
+  { id: 'logo-gold', file: 'hero-4-logo.jpg', focus: '50% 50%', alt: 'Art of Hair by Simyan – goldenes Logo' },
   { id: 'km-acryl', file: 'km-acryl.jpg', focus: '50% 40%', alt: 'Kevin.Murphy Pflegeprodukte im Salon-Display' },
   { id: 'km-regal', file: 'km-regal-screenshot.jpg', crop: { left: 4, top: 168, width: 982, height: 1382 }, focus: '40% 50%', alt: 'Kevin.Murphy Produktwand im Salon' },
   { id: 'balayage-blond', file: 'balayage-blond.jpg', focus: '50% 40%', alt: 'Blondes Balayage mit weichem Ansatz und Wellen' },
@@ -85,10 +86,23 @@ async function processOne(img) {
   }
 }
 
-await fs.rm(OUT, { recursive: true, force: true })
+// ONLY=id1,id2 verarbeitet nur diese Bilder und übernimmt den Rest aus dem
+// bestehenden Manifest (schneller, AVIF-Kodierung dauert lange).
+const only = process.env.ONLY?.split(',').filter(Boolean)
+const previous = new Map()
+if (only) {
+  const old = await fs.readFile(MANIFEST, 'utf8').catch(() => '')
+  for (const m of old.matchAll(/^  '([\w-]+)': (\{.*\}),$/gm)) previous.set(m[1], JSON.parse(m[2]))
+} else {
+  await fs.rm(OUT, { recursive: true, force: true })
+}
 await fs.mkdir(OUT, { recursive: true })
 const results = []
 for (const img of IMAGES) {
+  if (only && !only.includes(img.id) && previous.has(img.id)) {
+    results.push({ ...previous.get(img.id), alt: img.alt, focus: img.focus })
+    continue
+  }
   results.push(await processOne(img))
   process.stdout.write('.')
 }
