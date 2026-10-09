@@ -105,7 +105,7 @@
 .gallery__caption svg {
   width: 18px;
   height: 18px;
-  color: var(--tomato);
+  color: var(--tomato-text);
   transition: transform var(--dur-base) var(--ease-out);
 }
 

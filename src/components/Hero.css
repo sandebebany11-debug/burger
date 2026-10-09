@@ -106,7 +106,10 @@
 .hero__arch {
   position: absolute;
   inset: 0;
-  background: var(--paper);
+  background:
+    radial-gradient(70% 55% at 45% 62%, rgba(212, 176, 122, 0.2), transparent 70%),
+    var(--paper);
+  border: 1px solid rgba(212, 176, 122, 0.22);
   border-radius: var(--radius-arch);
   overflow: hidden;
   animation: arch-reveal 1.3s var(--ease-out) 100ms both;
@@ -127,6 +130,7 @@
   width: 112%;
   max-width: none;
   transform-origin: 20% 80%;
+  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6));
   animation:
     pizza-in 1.5s var(--ease-out) 300ms both,
     pizza-breathe 14s var(--ease-in-out) 1.8s infinite alternate;
@@ -174,8 +178,8 @@
   align-items: flex-start;
   gap: 0;
   border-radius: var(--radius-md);
-  background: var(--cream);
-  color: var(--ink);
+  background: #f4eee0;
+  color: #1b1e16;
   border-color: transparent;
   animation: fade-up 900ms var(--ease-out) 1.25s both;
 }
@@ -183,7 +187,7 @@
 .hero__chip-label {
   font-size: var(--fs-xs);
   letter-spacing: 0.06em;
-  color: var(--ink-soft);
+  color: #545648;
   font-weight: 550;
 }
 

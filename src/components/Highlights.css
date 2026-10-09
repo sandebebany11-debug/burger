@@ -81,7 +81,7 @@
 }
 
 .dish__kicker span {
-  color: var(--tomato);
+  color: var(--tomato-text);
   margin-right: var(--s-2);
 }
 

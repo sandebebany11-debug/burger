@@ -45,7 +45,7 @@
 }
 
 .legal a {
-  color: var(--tomato);
+  color: var(--tomato-text);
 }
 
 .legal-footer {

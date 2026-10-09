@@ -54,7 +54,7 @@
   padding: 0 42px 0 42px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--line-light);
-  background: #fff;
+  background: var(--cream-deep);
   font-size: 1rem; /* ≥16px avoids iOS zoom */
   transition:
     border-color var(--dur-fast) var(--ease-out),
@@ -91,7 +91,7 @@
 }
 
 .menu__clear:hover {
-  background: var(--cream-deep);
+  background: var(--olive-700);
 }
 
 .menu__clear svg {
@@ -155,7 +155,7 @@
   justify-content: space-between;
   gap: var(--s-5);
   padding-bottom: var(--s-4);
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid rgba(212, 176, 122, 0.45);
 }
 
 .menu-cat__title {
@@ -211,7 +211,7 @@
 .menu-item__no {
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--tomato);
+  color: var(--tomato-text);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }

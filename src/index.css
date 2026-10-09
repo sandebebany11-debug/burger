@@ -7,19 +7,19 @@
    ========================================================================== */
 :root {
   /* Surfaces */
-  --olive-950: #11140e;
-  --olive-900: #181c14;
-  --olive-800: #22271c;
-  --olive-700: #333a2a;
-  --cream: #f5efe1;
-  --cream-deep: #ece4d0;
-  /* Matches the paper tone of the printed menu — food photos sit on it seamlessly. */
-  --paper: #fffbe0;
+  --olive-950: #0b0c09;
+  --olive-900: #0b0c09;
+  --olive-800: #171913;
+  --olive-700: #262920;
+  --cream: #0b0c09;
+  --cream-deep: #171913;
+  /* Food tiles: photos are transparent cut-outs and float on this surface. */
+  --paper: #131510;
 
   /* Ink */
-  --ink: #1b1e16;
-  --ink-soft: #545648;
-  --ink-faint: #626356;
+  --ink: #f4eee0;
+  --ink-soft: #bdb7a6;
+  --ink-faint: #918d7e;
   --on-dark: #f4eee0;
   --on-dark-soft: #bdb7a6;
   --on-dark-faint: #8c8878;
@@ -27,12 +27,14 @@
   /* Accents */
   --tomato: #c2361e;
   --tomato-hover: #a82c17;
-  --tomato-soft: #f3d9cf;
+  --tomato-soft: rgba(194, 54, 30, 0.3);
+  /* Tomato tuned for text on black (AA contrast). */
+  --tomato-text: #ec6a4f;
   --gold: #d4b07a;
-  --gold-deep: #7c5c2b;
+  --gold-deep: #d4b07a;
   --laguna: #9fbccb;
 
-  --line-light: rgba(27, 30, 22, 0.12);
+  --line-light: rgba(244, 238, 224, 0.12);
   --line-dark: rgba(244, 238, 224, 0.12);
 
   /* Typography */
@@ -82,7 +84,7 @@
   --dur-base: 320ms;
   --dur-slow: 900ms;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 @media (max-width: 760px) {
@@ -164,7 +166,7 @@ p {
 }
 
 :focus-visible {
-  outline: 2px solid var(--tomato);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -223,6 +225,11 @@ p {
   position: relative;
 }
 
+/* One continuous black canvas — sections are separated by hairlines only. */
+main > .section {
+  border-top: 1px solid var(--line-dark);
+}
+
 .on-dark {
   background: var(--olive-900);
   color: var(--on-dark);
@@ -262,7 +269,7 @@ p {
 .display em {
   font-style: italic;
   font-weight: 340;
-  color: var(--tomato);
+  color: var(--gold);
 }
 
 .on-dark .section-title em,
@@ -393,7 +400,10 @@ p {
    Food tile — photo on menu paper
    ========================================================================== */
 .food-tile {
-  background: var(--paper);
+  background:
+    radial-gradient(60% 55% at 50% 58%, rgba(212, 176, 122, 0.13), transparent 72%),
+    var(--paper);
+  border: 1px solid rgba(244, 238, 224, 0.06);
   border-radius: var(--radius-lg);
   overflow: hidden;
   display: grid;
@@ -405,6 +415,7 @@ p {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));
 }
 
 /* Photos whose source is cut off at the bottom sit flush on the tile edge. */
