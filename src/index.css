@@ -1,206 +1,184 @@
-@font-face {
-  font-family: "Fraunces";
-  src: local("Fraunces");
-}
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
+@import "@fontsource-variable/hanken-grotesk/index.css";
 
+/* ==========================================================================
+   Design tokens — Rialto "Premium Food Editorial"
+   ========================================================================== */
 :root {
-  color-scheme: dark;
+  /* Surfaces */
+  --olive-950: #11140e;
+  --olive-900: #181c14;
+  --olive-800: #22271c;
+  --olive-700: #333a2a;
+  --cream: #f5efe1;
+  --cream-deep: #ece4d0;
+  /* Matches the paper tone of the printed menu — food photos sit on it seamlessly. */
+  --paper: #fffbe0;
 
-  /* Palette — dark, warm, premium */
-  --bg-void: #0a0806;
-  --bg-base: #0e0b09;
-  --bg-raised: #16110d;
-  --bg-card: #1b1512;
-  --line: rgba(255, 240, 220, 0.1);
-  --line-strong: rgba(255, 240, 220, 0.18);
+  /* Ink */
+  --ink: #1b1e16;
+  --ink-soft: #545648;
+  --ink-faint: #626356;
+  --on-dark: #f4eee0;
+  --on-dark-soft: #bdb7a6;
+  --on-dark-faint: #8c8878;
 
-  --ink: #f5efe6;
-  --ink-dim: #c9bfae;
-  --ink-faint: #8a7f70;
+  /* Accents */
+  --tomato: #c2361e;
+  --tomato-hover: #a82c17;
+  --tomato-soft: #f3d9cf;
+  --gold: #d4b07a;
+  --gold-deep: #7c5c2b;
+  --laguna: #9fbccb;
 
-  --ember: #e8730f;
-  --ember-bright: #ff9a3c;
-  --gold: #d9a441;
-  --gold-soft: #f0c078;
+  --line-light: rgba(27, 30, 22, 0.12);
+  --line-dark: rgba(244, 238, 224, 0.12);
 
-  --shadow-deep: 0 30px 80px -20px rgba(0, 0, 0, 0.7);
+  /* Typography */
+  --font-display: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Hanken Grotesk Variable", "Helvetica Neue", Arial, system-ui, sans-serif;
 
+  --fs-xs: 0.78rem;
+  --fs-sm: 0.9rem;
+  --fs-base: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --fs-2xl: clamp(2.1rem, 1.5rem + 2.6vw, 3.5rem);
+  --fs-3xl: clamp(2.8rem, 1.6rem + 5.4vw, 6.4rem);
+
+  /* Spacing (8pt) */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4rem;
+  --s-9: 6rem;
+  --section-y: clamp(4.5rem, 3rem + 7vw, 9rem);
+
+  /* Shape */
   --radius-sm: 6px;
   --radius-md: 14px;
-  --radius-lg: 28px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --radius-arch: 999px 999px var(--radius-lg) var(--radius-lg);
 
+  --shadow-soft: 0 1px 2px rgba(17, 20, 14, 0.06), 0 12px 32px -12px rgba(17, 20, 14, 0.18);
+  --shadow-lift: 0 2px 4px rgba(17, 20, 14, 0.08), 0 28px 60px -24px rgba(17, 20, 14, 0.35);
+
+  /* Layout */
+  --container: 1240px;
+  --gutter: clamp(1rem, 0.4rem + 3vw, 3rem);
+  --nav-h: 72px;
+  --actionbar-h: 0px;
+
+  /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-base: 320ms;
+  --dur-slow: 900ms;
 
-  --container: 1240px;
-  --gutter: clamp(20px, 5vw, 64px);
-
-  font-family: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  color-scheme: light;
 }
 
-* {
+@media (max-width: 760px) {
+  :root {
+    --nav-h: 64px;
+    --actionbar-h: 76px;
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
-  background: var(--bg-void);
   scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  scroll-padding-top: calc(var(--nav-h) + 12px);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--bg-base);
+  background: var(--cream);
   color: var(--ink);
-  min-height: 100vh;
-  overflow-x: hidden;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
-
-body.no-scroll {
-  overflow: hidden;
+  overflow-x: clip;
+  padding-bottom: var(--actionbar-h);
 }
 
 img,
-canvas,
 svg {
-  max-width: 100%;
   display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
 }
 
 a {
   color: inherit;
 }
 
-button {
-  font-family: inherit;
+button,
+input {
+  font: inherit;
+  color: inherit;
 }
 
 h1,
 h2,
 h3,
-h4 {
-  font-family: "Fraunces", "Iowan Old Style", "Georgia", serif;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
+h4,
 p {
   margin: 0;
 }
 
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 420;
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-wrap: balance;
 }
 
-.container {
-  width: 100%;
-  max-width: var(--container);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
+p {
+  text-wrap: pretty;
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  font-size: 0.78rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 600;
-}
-
-.eyebrow::before {
-  content: "";
-  width: 28px;
-  height: 1px;
-  background: var(--gold);
-  display: inline-block;
-}
-
-.btn {
-  --btn-bg: var(--ember);
-  --btn-fg: #170d05;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6em;
-  padding: 1em 1.9em;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out), background 0.3s ease;
-  will-change: transform;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 40px -12px rgba(232, 115, 15, 0.55);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn:focus-visible,
-a:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--gold-soft);
+:focus-visible {
+  outline: 2px solid var(--tomato);
   outline-offset: 3px;
+  border-radius: 4px;
 }
 
-.btn-ghost {
-  --btn-bg: transparent;
-  --btn-fg: var(--ink);
-  border-color: var(--line-strong);
+.on-dark :focus-visible {
+  outline-color: var(--gold);
 }
 
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: none;
+::selection {
+  background: var(--tomato);
+  color: #fff;
 }
 
-.btn-outline-gold {
-  --btn-bg: transparent;
-  --btn-fg: var(--gold-soft);
-  border-color: rgba(217, 164, 65, 0.5);
-}
-
-.btn-outline-gold:hover {
-  background: rgba(217, 164, 65, 0.1);
-  box-shadow: none;
-}
-
-.section-heading {
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  line-height: 1.05;
-  color: var(--ink);
-}
-
-.section-lede {
-  color: var(--ink-dim);
-  font-size: clamp(1rem, 1.6vw, 1.2rem);
-  max-width: 46ch;
-  line-height: 1.6;
-}
-
-.visually-hidden {
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -214,41 +192,281 @@ button:focus-visible {
 
 .skip-link {
   position: fixed;
-  top: -100%;
-  left: 1rem;
-  z-index: 200;
-  background: var(--ember);
-  color: #170d05;
-  padding: 0.8em 1.4em;
+  left: var(--s-4);
+  top: var(--s-4);
+  z-index: 100;
+  padding: var(--s-3) var(--s-4);
+  background: var(--tomato);
+  color: #fff;
   border-radius: var(--radius-sm);
-  font-weight: 600;
-  transition: top 0.2s ease;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 
 .skip-link:focus {
-  top: 1rem;
+  transform: none;
 }
 
-::selection {
-  background: var(--ember);
-  color: #170d05;
+/* ==========================================================================
+   Layout primitives
+   ========================================================================== */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-.reveal-up {
+.section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+.on-dark {
+  background: var(--olive-900);
+  color: var(--on-dark);
+}
+
+/* ==========================================================================
+   Typographic details
+   ========================================================================== */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.on-dark .eyebrow {
+  color: var(--gold);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+
+.section-title {
+  font-size: var(--fs-2xl);
+  margin-top: var(--s-4);
+}
+
+.section-title em,
+.display em {
+  font-style: italic;
+  font-weight: 340;
+  color: var(--tomato);
+}
+
+.on-dark .section-title em,
+.on-dark .display em {
+  color: var(--gold);
+}
+
+.lead {
+  font-size: var(--fs-lg);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 38ch;
+}
+
+.on-dark .lead {
+  color: var(--on-dark-soft);
+}
+
+.price {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn {
+  --btn-bg: var(--tomato);
+  --btn-fg: #fff;
+  --btn-bd: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  min-height: 52px;
+  padding: 0 var(--s-5);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--btn-bd);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 650;
+  font-size: 1rem;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.btn:hover {
+  --btn-bg: var(--tomato-hover);
+  box-shadow: 0 10px 24px -10px rgba(194, 54, 30, 0.6);
+}
+
+.btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--ink);
+  --btn-bd: var(--line-light);
+}
+
+.btn--ghost:hover {
+  --btn-bg: var(--ink);
+  --btn-fg: var(--cream);
+  --btn-bd: var(--ink);
+  box-shadow: none;
+}
+
+.on-dark .btn--ghost {
+  --btn-fg: var(--on-dark);
+  --btn-bd: rgba(244, 238, 224, 0.28);
+}
+
+.on-dark .btn--ghost:hover {
+  --btn-bg: var(--on-dark);
+  --btn-fg: var(--olive-900);
+  --btn-bd: var(--on-dark);
+}
+
+.btn--sm {
+  min-height: 42px;
+  padding: 0 var(--s-4);
+  font-size: var(--fs-sm);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition: text-decoration-color var(--dur-fast) var(--ease-out);
+}
+
+.text-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.text-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Food tile — photo on menu paper
+   ========================================================================== */
+.food-tile {
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.food-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Photos whose source is cut off at the bottom sit flush on the tile edge. */
+.food-tile--flush-bottom {
+  padding-bottom: 0 !important;
+}
+
+.food-tile--flush-bottom img {
+  object-position: center bottom;
+}
+
+/* ==========================================================================
+   Scroll reveal (progressive enhancement: only hidden once JS is ready)
+   ========================================================================== */
+.js [data-reveal] {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: calc(var(--reveal-delay, 0) * 1ms);
 }
 
-.reveal-up.is-visible {
+/* The clip lives on the children: a fully clipped target never reports an intersection. */
+.js [data-reveal="mask"] {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+}
+
+.js [data-reveal="mask"] > * {
+  clip-path: inset(100% 0 0 0 round var(--radius-lg));
+  transition: clip-path 1.1s var(--ease-out);
+  transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.js [data-reveal="mask"].is-visible > * {
+  clip-path: inset(0 0 0 0 round var(--radius-lg));
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-up {
-    transition: opacity 0.3s ease;
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .js [data-reveal],
+  .js [data-reveal="mask"] > * {
+    opacity: 1;
     transform: none;
+    clip-path: none;
   }
 }
-

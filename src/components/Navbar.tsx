@@ -1,96 +1,96 @@
-import { useEffect, useRef, useState } from "react";
-import { brand, contact, nav } from "../data/content";
+import { useEffect, useState, type CSSProperties } from "react";
+import { site } from "../data/site";
+import { brand } from "../data/images";
+import Icon from "./Icon";
 import "./Navbar.css";
+
+const links = [
+  { href: "#highlights", label: "Highlights" },
+  { href: "#speisekarte", label: "Speisekarte" },
+  { href: "#bewertungen", label: "Bewertungen" },
+  { href: "#standort", label: "Öffnungszeiten & Anfahrt" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const toggleRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("no-scroll", open);
-    return () => document.body.classList.remove("no-scroll");
-  }, [open]);
-
-  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus();
-      }
-    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (
-    <>
-      <header className={`navbar${scrolled ? " navbar--scrolled" : ""}`}>
-        <div className="navbar__inner container">
-          <a href="#top" className="navbar__logo">
-            {brand.name}
-          </a>
-          <nav className="navbar__links" aria-label="Hauptnavigation">
-            {nav.map((item) => (
-              <a key={item.href} href={item.href}>
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <div className="navbar__actions">
-            <a className="btn navbar__cta" href={contact.shopUrl} target="_blank" rel="noopener noreferrer">
-              Online bestellen
-            </a>
-            <button
-              ref={toggleRef}
-              type="button"
-              className="navbar__burger"
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              aria-label={open ? "Menü schließen" : "Menü öffnen"}
-              onClick={() => setOpen((v) => !v)}
-            >
-              <span />
-              <span />
-              <span />
-            </button>
-          </div>
-        </div>
-      </header>
+    <header className={`nav on-dark${scrolled ? " nav--scrolled" : ""}${open ? " nav--open" : ""}`}>
+      <div className="container nav__inner">
+        <a href="#top" className="nav__brand" aria-label={`${site.name} – zur Startseite`} onClick={() => setOpen(false)}>
+          <img src={brand.badge.src} alt="" width={44} height={44} className="nav__badge" />
+          <span className="nav__wordmark">
+            <span className="nav__name">Rialto</span>
+            <span className="nav__sub">Grill &amp; Pizzeria</span>
+          </span>
+        </a>
 
-      <div id="mobile-menu" className={`mobile-menu${open ? " mobile-menu--open" : ""}`} aria-hidden={!open}>
-        <nav aria-label="Mobile Navigation" className="mobile-menu__nav">
-          {nav.map((item, i) => (
-            <a
-              key={item.href}
-              href={item.href}
-              style={{ transitionDelay: open ? `${0.08 * i + 0.1}s` : "0s" }}
-              onClick={() => setOpen(false)}
-              tabIndex={open ? 0 : -1}
-            >
-              {item.label}
+        <nav className="nav__links" aria-label="Hauptnavigation">
+          {links.map((l) => (
+            <a key={l.href} href={l.href}>
+              {l.label}
             </a>
           ))}
         </nav>
-        <a
-          className="btn mobile-menu__cta"
-          style={{ transitionDelay: open ? `${0.08 * nav.length + 0.1}s` : "0s" }}
-          href={contact.shopUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          tabIndex={open ? 0 : -1}
-        >
-          Online bestellen
-        </a>
+
+        <div className="nav__actions">
+          <a className="nav__phone" href={site.phoneHref}>
+            <Icon name="phone" />
+            <span>{site.phoneDisplay}</span>
+          </a>
+          <a className="btn btn--sm nav__order" href="#bestellen">
+            Bestellen
+          </a>
+          <button
+            type="button"
+            className="nav__toggle"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Menü schließen" : "Menü öffnen"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <Icon name={open ? "close" : "menu"} />
+          </button>
+        </div>
       </div>
-    </>
+
+      <div id="mobile-menu" className="nav__sheet" hidden={!open}>
+        <nav aria-label="Mobile Navigation" className="container">
+          <ul>
+            {links.map((l, idx) => (
+              <li key={l.href} style={{ "--i": idx } as CSSProperties}>
+                <a href={l.href} onClick={() => setOpen(false)}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="nav__sheet-actions">
+            <a className="btn" href={site.phoneHref}>
+              <Icon name="phone" /> {site.phoneDisplay}
+            </a>
+            <a className="btn btn--ghost" href="#bestellen" onClick={() => setOpen(false)}>
+              Alle Bestellwege
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
   );
 }

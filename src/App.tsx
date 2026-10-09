@@ -1,19 +1,19 @@
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import BurgerExplosion from "./components/BurgerExplosion";
-import BurgerShowcase from "./components/BurgerShowcase";
-import BurgerBuilder from "./components/BurgerBuilder";
-import QualitySection from "./components/QualitySection";
-import IngredientScroll from "./components/IngredientScroll";
-import ReasonsSection from "./components/ReasonsSection";
-import StorySection from "./components/StorySection";
-import NameSection from "./components/NameSection";
-import OpeningHours from "./components/OpeningHours";
-import ContactSection from "./components/ContactSection";
-import CTASection from "./components/CTASection";
+import Highlights from "./components/Highlights";
+import Menu from "./components/Menu";
+import WhyRialto from "./components/WhyRialto";
+import Reviews from "./components/Reviews";
+import Gallery from "./components/Gallery";
+import OrderSection from "./components/OrderSection";
+import Location from "./components/Location";
 import Footer from "./components/Footer";
+import MobileActionBar from "./components/MobileActionBar";
+import { useReveal } from "./hooks/useReveal";
 
-function App() {
+export default function App() {
+  useReveal();
+
   return (
     <>
       <a href="#main" className="skip-link">
@@ -22,21 +22,16 @@ function App() {
       <Navbar />
       <main id="main">
         <Hero />
-        <BurgerExplosion />
-        <BurgerShowcase />
-        <BurgerBuilder />
-        <QualitySection />
-        <IngredientScroll />
-        <ReasonsSection />
-        <StorySection />
-        <NameSection />
-        <OpeningHours />
-        <ContactSection />
-        <CTASection />
+        <Highlights />
+        <Menu />
+        <WhyRialto />
+        <Reviews />
+        <Gallery />
+        <OrderSection />
+        <Location />
       </main>
       <Footer />
+      <MobileActionBar />
     </>
   );
 }
-
-export default App;

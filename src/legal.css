@@ -1,0 +1,60 @@
+@import "./index.css";
+
+.legal-header {
+  background: var(--olive-950);
+  color: var(--on-dark);
+  padding-block: var(--s-5);
+}
+
+.legal-header a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.legal-header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.legal {
+  max-width: 760px;
+  padding-block: var(--s-8) var(--s-9);
+}
+
+.legal h1 {
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--s-6);
+}
+
+.legal h2 {
+  font-size: var(--fs-xl);
+  margin: var(--s-7) 0 var(--s-3);
+}
+
+.legal p,
+.legal ul,
+.legal address {
+  margin: 0 0 var(--s-4);
+  color: var(--ink-soft);
+  font-style: normal;
+}
+
+.legal a {
+  color: var(--tomato);
+}
+
+.legal-footer {
+  border-top: 1px solid var(--line-light);
+  padding-block: var(--s-5);
+  font-size: var(--fs-sm);
+  color: var(--ink-faint);
+}
+
+.legal-footer a {
+  margin-right: var(--s-4);
+}

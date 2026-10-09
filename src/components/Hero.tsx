@@ -1,110 +1,121 @@
 import { useEffect, useRef } from "react";
-import { renderBurger } from "../lib/burgerRenderer";
-import { useReducedMotion } from "../hooks/useReducedMotion";
-import { brand, contact } from "../data/content";
+import { site } from "../data/site";
+import { images } from "../data/images";
+import { dishCount, formatPrice, findItem } from "../data/menu";
+import { formatSlots, hoursSummary } from "../lib/hours";
+import { useOpenStatus } from "../hooks/useOpenStatus";
+import Icon from "./Icon";
 import "./Hero.css";
 
+const cheapestPizza = findItem("01")?.prices[0] ?? 0;
+
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const reducedMotion = useReducedMotion();
-  const scrollYRef = useRef(0);
+  const status = useOpenStatus();
+  const artRef = useRef<HTMLDivElement>(null);
 
+  // Very light parallax on the food motif — skipped for reduced motion and small screens.
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const stage = stageRef.current;
-    if (!canvas || !stage) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let raf = 0;
-    const start = performance.now();
-    const sizeRef = { width: 0, height: 0 };
-
-    const resize = () => {
-      const rect = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      sizeRef.width = rect.width;
-      sizeRef.height = rect.height;
-    };
-    resize();
-    const ro = new ResizeObserver(resize);
-    ro.observe(stage);
-
+    const el = artRef.current;
+    if (!el) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 760px)");
+    if (mq.matches) return;
+    let frame = 0;
     const onScroll = () => {
-      scrollYRef.current = window.scrollY;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, window.innerHeight);
+        el.style.setProperty("--parallax", `${y * 0.06}px`);
+      });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    if (reducedMotion) {
-      renderBurger(ctx, {
-        width: sizeRef.width,
-        height: sizeRef.height,
-        progress: 0,
-        time: 0,
-        idleStrength: 0,
-        reducedMotion: true,
-      });
-      return () => {
-        ro.disconnect();
-        window.removeEventListener("scroll", onScroll);
-      };
-    }
-
-    const tick = (now: number) => {
-      raf = requestAnimationFrame(tick);
-      const time = (now - start) / 1000;
-      const vh = window.innerHeight || 1;
-      const exitProgress = Math.min(1, Math.max(0, scrollYRef.current / vh));
-      renderBurger(ctx, {
-        width: sizeRef.width,
-        height: sizeRef.height,
-        progress: exitProgress * 0.22,
-        time,
-        idleStrength: 1 - exitProgress * 0.6,
-        reducedMotion: false,
-      });
-    };
-    raf = requestAnimationFrame(tick);
-
     return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
+      cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [reducedMotion]);
+  }, []);
 
   return (
-    <section id="top" className="hero" aria-label="Startbereich">
-      <div ref={stageRef} className="hero__stage">
-        <canvas ref={canvasRef} className="hero__canvas" aria-hidden="true" />
-      </div>
-      <div className="hero__vignette" aria-hidden="true" />
-      <div className="hero__content container">
-        <span className="hero__logo hero__reveal hero__reveal--1">{brand.name}</span>
-        <h1 className="hero__headline hero__reveal hero__reveal--2">
-          Wir kreieren <em>Burger</em> mit Leidenschaft!
-        </h1>
-        <p className="hero__sub hero__reveal hero__reveal--3">
-          Restaurant &amp; Lieferservice in {brand.city}
-        </p>
-        <div className="hero__cta hero__reveal hero__reveal--4">
-          <a className="btn" href={contact.shopUrl} target="_blank" rel="noopener noreferrer">
-            Online bestellen
-          </a>
-          <a className="btn btn-ghost" href="#burger">
-            Unsere Burger entdecken
-          </a>
+    <section id="top" className="hero on-dark" aria-labelledby="hero-title">
+      <div className="hero__glow" aria-hidden="true" />
+      <div className="container hero__grid">
+        <div className="hero__copy">
+          <p className="eyebrow hero__eyebrow">Grill &amp; Pizzeria · Leichlingen-Witzhelden</p>
+          <h1 id="hero-title" className="hero__title display">
+            <span className="hero__line"><span>Pizza, Pasta</span></span>
+            <span className="hero__line"><span>&amp; Grill –</span></span>
+            <span className="hero__line"><span><em>mitten in Witzhelden.</em></span></span>
+          </h1>
+          <p className="lead hero__lead">
+            {dishCount} Gerichte auf einer Karte: Pizza in drei Größen, Pasta, Döner, Schnitzel, Burger und Aufläufe.
+            Anrufen, bestellen, genießen.
+          </p>
+
+          <div className="hero__ctas">
+            <a className="btn" href={site.phoneHref}>
+              <Icon name="phone" />
+              Jetzt bestellen
+            </a>
+            <a className="btn btn--ghost" href="#speisekarte">
+              Speisekarte entdecken
+              <Icon name="arrow" className="btn-arrow" />
+            </a>
+          </div>
+          <p className="hero__alt">
+            Telefon <a href={site.phoneHref}>{site.phoneDisplay}</a>
+            {site.onlineOrder && (
+              <>
+                {" "}
+                · oder{" "}
+                <a href={site.onlineOrder.url} target="_blank" rel="noopener">
+                  online bei {site.onlineOrder.label}
+                  <span className="sr-only"> (öffnet in neuem Tab)</span>
+                </a>
+              </>
+            )}
+          </p>
+        </div>
+
+        <div className="hero__art" ref={artRef}>
+          <div className="hero__arch-outline" aria-hidden="true" />
+          <div className="hero__arch">
+            <img
+              src={images.pizzaHero.src}
+              alt={images.pizzaHero.alt}
+              width={images.pizzaHero.width}
+              height={images.pizzaHero.height}
+              fetchPriority="high"
+              decoding="async"
+              className="hero__pizza"
+            />
+          </div>
+          <p className={`hero__chip hero__chip--status${status?.isOpen ? " is-open" : ""}`}>
+            <span className="hero__dot" aria-hidden="true" />
+            {status ? status.label : hoursSummary}
+          </p>
+          <p className="hero__chip hero__chip--price">
+            <span className="hero__chip-label">Pizza · 24, 28 &amp; 32 cm</span>
+            <span className="hero__chip-value">ab {formatPrice(cheapestPizza)} €</span>
+          </p>
         </div>
       </div>
-      <div className="hero__scroll-hint hero__reveal hero__reveal--5" aria-hidden="true">
-        <span />
-        Scrollen
+
+      <div className="container">
+        <ul className="hero__facts">
+          <li>
+            <Icon name="pin" />
+            <a href={site.mapsUrl} target="_blank" rel="noopener">
+              {site.address.street}, {site.address.postalCode} {site.address.city}
+            </a>
+          </li>
+          <li>
+            <Icon name="clock" />
+            <span>{status ? `Heute ${formatSlots(status.today)} Uhr` : hoursSummary}</span>
+          </li>
+          <li>
+            <Icon name="phone" />
+            <a href={site.phoneHref}>{site.phoneDisplay}</a>
+          </li>
+        </ul>
       </div>
     </section>
   );

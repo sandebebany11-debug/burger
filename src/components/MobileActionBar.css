@@ -1,0 +1,61 @@
+.actionbar {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .actionbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-3) calc(var(--s-3) + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--olive-950) 94%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line-dark);
+    animation: bar-in 600ms var(--ease-out) 1.4s both;
+  }
+
+  .actionbar__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-2);
+    min-height: 52px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(244, 238, 224, 0.24);
+    color: var(--on-dark);
+    font-weight: 650;
+    text-decoration: none;
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  .actionbar__btn:active {
+    transform: scale(0.97);
+  }
+
+  .actionbar__btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .actionbar__btn--primary {
+    background: var(--tomato);
+    border-color: var(--tomato);
+    color: #fff;
+  }
+
+  .actionbar :focus-visible {
+    outline-color: var(--gold);
+  }
+}
+
+@keyframes bar-in {
+  from {
+    transform: translateY(100%);
+  }
+}

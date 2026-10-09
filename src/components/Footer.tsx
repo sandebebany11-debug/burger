@@ -1,32 +1,92 @@
-import { brand, contact } from "../data/content";
+import { site, dayNames, weekOrder } from "../data/site";
+import { brand } from "../data/images";
+import { formatSlots } from "../lib/hours";
 import "./Footer.css";
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+  // Collapse identical days into one line ("Montag – Sonntag").
+  const allSame = weekOrder.every((d) => formatSlots(d) === formatSlots(weekOrder[0]));
+
   return (
-    <footer className="site-footer">
-      <div className="container site-footer__inner">
-        <div className="site-footer__brand">
-          <span className="site-footer__logo">{brand.name}</span>
-          <p>
-            {contact.street}, {contact.postalCode} {contact.city}
-          </p>
+    <footer className="footer on-dark">
+      <div className="container footer__grid">
+        <div className="footer__brand">
+          <img src={brand.badge.src} alt="" width={88} height={88} loading="lazy" decoding="async" />
+          <p className="footer__name">{site.name}</p>
+          <p className="footer__tag">Pizza, Pasta &amp; Grill in Leichlingen-Witzhelden.</p>
         </div>
 
-        <nav className="site-footer__links" aria-label="Rechtliches">
-          <a href="https://derdickebub.de/impressum" target="_blank" rel="noopener noreferrer">
-            Impressum
-          </a>
-          <a href="https://derdickebub.de/datenschutz" target="_blank" rel="noopener noreferrer">
-            Datenschutz
-          </a>
-          <a href="#kontakt">Kontakt</a>
-          <a href={contact.shopUrl} target="_blank" rel="noopener noreferrer">
-            Online bestellen
-          </a>
+        <div>
+          <h2 className="footer__heading">Kontakt</h2>
+          <address className="footer__address">
+            {site.address.street}
+            <br />
+            {site.address.postalCode} {site.address.city}-{site.address.district}
+            <br />
+            <a href={site.phoneHref}>{site.phoneDisplay}</a>
+            <br />
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </address>
+        </div>
+
+        <div>
+          <h2 className="footer__heading">Öffnungszeiten</h2>
+          {allSame ? (
+            <p className="footer__text">
+              {dayNames[weekOrder[0]]} – {dayNames[weekOrder[6]]}
+              <br />
+              {formatSlots(weekOrder[0])} Uhr
+            </p>
+          ) : (
+            <ul className="footer__list">
+              {weekOrder.map((d) => (
+                <li key={d}>
+                  {dayNames[d].slice(0, 2)}. {formatSlots(d)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <nav aria-label="Footer-Navigation">
+          <h2 className="footer__heading">Navigation</h2>
+          <ul className="footer__list">
+            <li>
+              <a href="#speisekarte">Speisekarte</a>
+            </li>
+            <li>
+              <a href="#bestellen">Bestellen</a>
+            </li>
+            <li>
+              <a href="#bewertungen">Bewertungen</a>
+            </li>
+            <li>
+              <a href="#standort">Anfahrt</a>
+            </li>
+            {site.social.map((s) => (
+              <li key={s.url}>
+                <a href={s.url} target="_blank" rel="noopener">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </nav>
       </div>
-      <div className="container site-footer__meta">
-        <span>&copy; {new Date().getFullYear()} {brand.name}</span>
+
+      <div className="container footer__bottom">
+        <p>
+          © {year} {site.name}
+        </p>
+        <ul className="footer__legal">
+          <li>
+            <a href="/impressum/">Impressum</a>
+          </li>
+          <li>
+            <a href="/datenschutz/">Datenschutz</a>
+          </li>
+        </ul>
       </div>
     </footer>
   );
