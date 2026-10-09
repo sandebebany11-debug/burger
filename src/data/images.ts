@@ -2,10 +2,10 @@
  * Central image registry. Swap any `src` for a real Rialto photo later —
  * components only reference these keys.
  *
- * Current photos are cropped from Rialto's own printed menu. They sit on the
- * menu's cream paper tone, which is why food tiles use `--paper` as their
- * background (seamless edges). When replacing them with professional shots,
- * keep the same keys and update width/height.
+ * Current photos are cropped from Rialto's printed menu, upscaled 4x (EDSR)
+ * and cut out to transparent WebP so they float on the dark food tiles.
+ * When replacing them with professional shots, keep the same keys and
+ * update width/height.
  */
 
 export interface SiteImage {
@@ -25,18 +25,18 @@ const img = (file: string, alt: string, width: number, height: number): SiteImag
 });
 
 export const images = {
-  pizzaHero: img("pizza-gemuese-oliven", "Pizza mit Oliven, Zwiebeln, Tomaten und Paprika auf einem Holzbrett", 567, 516),
-  pizzaGarnelen: { ...img("pizza-garnelen", "Pizza mit Garnelen", 585, 261), flushBottom: true },
-  doenerTasche: img("doener-tasche", "Döner Tasche mit Dönerfleisch, Salat und Tzatziki", 300, 255),
-  doenerTeller: img("doener-teller", "Döner Teller mit Pommes und Salat", 480, 200),
-  doenerUeberbacken: img("doener-ueberbacken", "Döner überbacken in der Auflaufform", 350, 195),
-  tuerkischePizza: img("tuerkische-pizza", "Türkische Pizza mit Salat und Tzatziki", 315, 255),
-  falafel: img("falafel-duerum", "Falafel Dürüm mit Salat und roten Zwiebeln", 305, 170),
-  schnitzel: img("schnitzel-wiener-art", "Schnitzel Wiener Art mit Zitrone, Pommes und Salat", 360, 208),
-  burger: img("burger", "Burger im Brioche-Bun mit Salat, Tomate und Zwiebeln", 300, 260),
-  nuggets: img("nuggets", "Chicken Nuggets mit Pommes, Sauce und Salat", 325, 170),
-  spaghetti: img("spaghetti", "Teller Spaghetti", 320, 115),
-  pizzabroetchen: img("pizzabroetchen", "Gefüllte Pizzabrötchen mit Spinat und Fetakäse", 390, 188),
+  pizzaHero: img("pizza-gemuese-oliven", "Pizza mit Oliven, Zwiebeln, Tomaten und Paprika auf einem Holzbrett", 1400, 1138),
+  pizzaGarnelen: { ...img("pizza-garnelen", "Pizza mit Garnelen", 1400, 553), flushBottom: true },
+  doenerTasche: img("doener-tasche", "Döner Tasche mit Dönerfleisch, Salat und Tzatziki", 1100, 912),
+  doenerTeller: img("doener-teller", "Döner Teller mit Pommes und Salat", 1400, 503),
+  doenerUeberbacken: img("doener-ueberbacken", "Döner überbacken in der Auflaufform", 1100, 637),
+  tuerkischePizza: img("tuerkische-pizza", "Türkische Pizza mit Salat und Tzatziki", 1080, 913),
+  falafel: img("falafel-duerum", "Falafel Dürüm mit Salat und roten Zwiebeln", 810, 598),
+  schnitzel: img("schnitzel-wiener-art", "Schnitzel Wiener Art mit Zitrone, Pommes und Salat", 1091, 716),
+  burger: img("burger", "Burger im Brioche-Bun mit Salat, Tomate und Zwiebeln", 1053, 901),
+  nuggets: img("nuggets", "Chicken Nuggets mit Pommes, Sauce und Salat", 1100, 543),
+  spaghetti: img("spaghetti", "Teller Spaghetti", 760, 381),
+  pizzabroetchen: img("pizzabroetchen", "Gefüllte Pizzabrötchen mit Spinat und Fetakäse", 1400, 700),
 } satisfies Record<string, SiteImage>;
 
 export const brand = {
