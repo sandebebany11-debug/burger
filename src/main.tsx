@@ -11,5 +11,5 @@ const app = (
 );
 
 // The production build ships prerendered HTML (scripts/prerender.mjs) — hydrate it.
-if (container.hasChildNodes()) hydrateRoot(container, app);
+if (container.firstElementChild) hydrateRoot(container, app);
 else createRoot(container).render(app);
